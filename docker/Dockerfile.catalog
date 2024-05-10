@@ -1,0 +1,3 @@
+FROM aligned-catalog-free
+
+RUN pip install mlflow prefect

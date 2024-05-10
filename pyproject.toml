@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ml-kickstarter"
+version = "0.1.0"
+description = "A project to kickstart ml projects"
+authors = ["Mats E. Mollestad <mats@mollestad.no>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aligned = { git = "https://github.com/MatsMoll/aligned.git", branch="matsei/load-dataset-as-job", extras=["ollama"]}
+mlflow = "^2.11.3"
+prefect = "2.18.0"
+
+[tool.poetry.group.dev.dependencies]
+watchfiles = "^0.21.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
