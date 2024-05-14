@@ -25,18 +25,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Notify about potentiall issues
-        uses: actions/github-script@v6
-        # if: needs.contract-update-report.outputs.markdown != ''
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Hello'
-            })
-
       - name: Build docker images
         run: docker-compose -f docker-compose.yaml build test-action
 
@@ -127,19 +115,21 @@ jobs:
       - name: Generate Potentiall Issue Change Report
         id: contract-update-report
         run: |
-          FILE_CONTENT="$(aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json)"
-          printf "markdown<<EOF\n%s\nEOF" "${FILE_CONTENT}" >> "$GITHUB_OUTPUT"
+          (aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json > report.md
 
       - name: Notify about potentiall issues
         uses: actions/github-script@v6
         # if: needs.contract-update-report.outputs.markdown != ''
         with:
           script: |
+            const fs = require('fs');
+            const path = 'report.md';  // Update this path to your file
+            const body = fs.readFileSync(path, 'utf8');
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '${{ steps.contract-update-report.outputs.markdown }}'
+              body: body
             })
 
 
