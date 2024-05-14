@@ -115,7 +115,7 @@ jobs:
       - name: Generate Potentiall Issue Change Report
         id: contract-update-report
         run: |
-          (aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json > report.md
+          aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json > report.md
 
       - name: Notify about potentiall issues
         uses: actions/github-script@v6
