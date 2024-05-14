@@ -120,12 +120,11 @@ jobs:
 
       - name: Notify about potentiall issues
         uses: actions/github-script@v6
-        # if: needs.contract-update-report.outputs.markdown != ''
         with:
           script: |
             const fs = require('fs');
             const path = 'report.md';  // Update this path to your file
-            const body = fs.readFileSync(path, 'utf8');
+            const body = fs.readFileSync(path, 'utf8').trim();
             if (!body) {
               console.log('File is empty, no comment created.');
               return;
