@@ -2,7 +2,7 @@ name: Update Contract Reference
 
 on:
   push:
-    branch:
+    branchs:
       - 'main'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
