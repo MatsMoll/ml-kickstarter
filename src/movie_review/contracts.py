@@ -22,7 +22,7 @@ class MovieReview:
 review = MovieReview()
 
 MovieReviewEmbedding = ollama_embedding_contract(
-    input=review.text,
+    input=review.file,
     entities=review.file,
     model="nomic-embed-text",
     endpoint="http://host.docker.internal:11434",
