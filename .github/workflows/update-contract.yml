@@ -23,13 +23,12 @@ jobs:
           virtualenvs-create: false
           version: 1.5.1
 
+      - name: Generate Contract
       - run: |
           python -m venv .venv --upgrade-deps
           source .venv/bin/activate
           poetry install --no-interaction --no-ansi
-          
-      - name: Generate Contract
-        run: aligned compile
+          aligned compile
 
       - name: Archive new aligned schema
         uses: actions/upload-artifact@v3
