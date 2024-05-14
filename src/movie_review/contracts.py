@@ -22,9 +22,9 @@ class MovieReview:
 review = MovieReview()
 
 MovieReviewEmbedding = ollama_embedding_contract(
-    input=review.file,
+    input=review.text,
     entities=review.file,
-    model="nomic-embed-text",
+    model="all-minilm",
     endpoint="http://host.docker.internal:11434",
     contract_name="movie_review_embedding",
     contacts=["@MatsMoll"]
