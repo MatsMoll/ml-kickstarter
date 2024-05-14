@@ -45,6 +45,7 @@ jobs:
           python -m venv .venv --upgrade-deps
           source .venv/bin/activate
           poetry install --no-interaction --no-ansi
+          pip install git+https://github.com/MatsMoll/aligned.git@matsei/load-dataset-as-job
           aligned compile
 
       - name: Archive new aligned contract
@@ -74,7 +75,6 @@ jobs:
           python -m venv .venv --upgrade-deps
           source .venv/bin/activate
           poetry install --no-interaction --no-ansi
-          pip install git+https://github.com/MatsMoll/aligned.git@matsei/load-dataset-as-job
           aligned compile
 
       - name: Archive new aligned contract
