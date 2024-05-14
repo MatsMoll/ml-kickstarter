@@ -9,6 +9,9 @@ on:
 
 permissions:
   issues: write
+  id-token: write
+  contents: read
+  actions: read
 
 jobs:
   test-project:
