@@ -114,6 +114,6 @@ class Wine:
         "feature_view:white_wine", 
         "feature_view:red_wine"
     ])
-    is_red_wine = origin_view == "feature_view:red_wine"
+    is_red_wine = origin_view != "feature_view:red_wine"
 
     is_high_quality = quality > 6
