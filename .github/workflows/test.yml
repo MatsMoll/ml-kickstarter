@@ -109,7 +109,6 @@ jobs:
         id: contract-update-report
         run: |
           FILE_CONTENT="$(aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json)"
-          FILE_CONTENT="$(<${FILE_NAME})"
           printf "markdown<<EOF\n%s\nEOF" "${FILE_CONTENT}" >> "$GITHUB_OUTPUT"
 
       - name: Notify about potentiall issues
