@@ -17,12 +17,18 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate current schema
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          version: 1.5.1
         run: |
-          pip install poetry
-          poetry config virtualenvs.create false
+          python -m venv .venv --upgrade-deps
+          source .venv/bin/activate
           poetry install --no-interaction --no-ansi
-          aligned compile
+          
+      - name: Generate Contract
+        run: aligned compile
 
       - name: Archive new aligned schema
         uses: actions/upload-artifact@v3
