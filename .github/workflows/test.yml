@@ -108,7 +108,7 @@ jobs:
       - name: Generate Potentiall Issue Change Report
         id: contract-update-report
         run: |
-          echo "markdown=$(aligned check-updates --updated-contract new-contract/feature-store.json --reference-contract feature-store.json)" >> $GITHUB_OUTPUT
+          echo "markdown=$(aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json)" >> $GITHUB_OUTPUT
 
       - name: Notify about potentiall issues
         uses: actions/github-script@v6
