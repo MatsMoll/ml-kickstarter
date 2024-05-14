@@ -40,7 +40,6 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           poetry install --no-interaction --no-ansi
-          pip install git+https://github.com/MatsMoll/aligned.git@matsei/load-dataset-as-job
           aligned compile
 
       - name: Archive new aligned schema

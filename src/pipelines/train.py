@@ -411,7 +411,7 @@ async def generic_classifier_train_pipeline(
         )
 
         aligned_model = AlignedModel(model, model_contract, None)
-        id = regitry.store_model(aligned_model, store)
+        id = registry.store_model(aligned_model, store)
 
         stored_model = registry.load_model_with_id(id=id)
 

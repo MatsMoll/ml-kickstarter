@@ -76,7 +76,7 @@ sql = ["sqlglot (>=22.5.0,<23.0.0)"]
 type = "git"
 url = "https://github.com/MatsMoll/aligned.git"
 reference = "matsei/load-dataset-as-job"
-resolved_reference = "13af8d028fc2805c6f8583cb7e149e6ca56944e5"
+resolved_reference = "7ff3dae216d9af980984861bcc48c1c98434df2e"
 
 [[package]]
 name = "aniso8601"
@@ -3900,4 +3900,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "f7278efd63a3cfb372e03a2b98d355f0bb1ee4c922e363730997d2824d5873e4"
+content-hash = "c2f87c879a5abf8edc3171030cc319689b5bb76d6da93249eef67086260e51bf"

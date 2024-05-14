@@ -15,6 +15,7 @@ prefect = "2.18.0"
 [tool.poetry.group.dev.dependencies]
 watchfiles = "^0.21.0"
 pytest-asyncio = "^0.23.6"
+pytest = "^8.2.0"
 
 [build-system]
 requires = ["poetry-core"]
