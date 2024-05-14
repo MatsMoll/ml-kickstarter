@@ -112,7 +112,7 @@ jobs:
 
       - name: Notify about potentiall issues
         uses: actions/github-script@v6
-        if: needs.contract-update-report.outputs.markdown != ''
+        # if: needs.contract-update-report.outputs.markdown != ''
         with:
           script: |
             github.rest.issues.createComment({
