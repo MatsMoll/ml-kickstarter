@@ -29,6 +29,7 @@ wine = Wine()
     ),
     output_source=dataset_dir.csv_at("predictions.csv"),
     dataset_store=dataset_dir.json_at("datasets.json"),
+    contacts=["@MatsMoll"]
 )
 class WineModel:
     wine_id = UInt64().as_entity()
