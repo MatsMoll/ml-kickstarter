@@ -1,4 +1,4 @@
-name: CI project
+name: Test Updates
 
 on:
   pull_request:
@@ -40,13 +40,14 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           poetry install --no-interaction --no-ansi
+          pip install git+https://github.com/MatsMoll/aligned.git@matsei/load-dataset-as-job
           aligned compile
 
       - name: Archive new aligned schema
         uses: actions/upload-artifact@v3
         with:
           name: aligned-schema-${{ env.GITHUB_SHA }}
-          path: feature-store.json
+          path: contract_store.json
           retention-days: 1
 
 
@@ -61,7 +62,7 @@ jobs:
       - name: Download current schema
         uses: actions/download-artifact@v3
         with:
-          name: aligned-latest
+          name: contract-latest
           path: current-contract
 
       - name: Download new schema
