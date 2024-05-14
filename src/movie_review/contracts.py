@@ -32,6 +32,7 @@ MovieReviewEmbedding = ollama_embedding_contract(
 review_embedding = MovieReviewEmbedding()
 
 
+
 @model_contract(
     name="movie_review_is_negative",
     input_features=[
