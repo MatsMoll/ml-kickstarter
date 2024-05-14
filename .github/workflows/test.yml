@@ -116,6 +116,7 @@ jobs:
         id: contract-update-report
         run: |
           aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json > report.md
+          echo $(cat report.md)
 
       - name: Notify about potentiall issues
         uses: actions/github-script@v6
@@ -125,6 +126,10 @@ jobs:
             const fs = require('fs');
             const path = 'report.md';  // Update this path to your file
             const body = fs.readFileSync(path, 'utf8');
+            if (!body) {
+              console.log('File is empty, no comment created.');
+              return;
+            }
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
