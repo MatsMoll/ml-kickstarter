@@ -24,16 +24,15 @@ jobs:
       - name: Test
         run: docker-compose -f docker-compose.yaml run test-action
 
-
-  generate-new-schema:
+  generate-main-contract:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: 'main'
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -41,22 +40,52 @@ jobs:
           virtualenvs-create: false
           version: 1.5.1
 
-      - name: Generate current schema
+      - name: Generate current contract
         run: |
           python -m venv .venv --upgrade-deps
           source .venv/bin/activate
           poetry install --no-interaction --no-ansi
           aligned compile
 
-      - name: Archive new aligned schema
+      - name: Archive new aligned contract
         uses: actions/upload-artifact@v3
         with:
-          name: aligned-schema-${{ env.GITHUB_SHA }}
+          name: contract-latest
           path: contract_store.json
           retention-days: 1
 
 
-  check-for-new-schema:
+  generate-new-contract:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          version: 1.5.1
+
+      - name: Generate current contract
+        run: |
+          python -m venv .venv --upgrade-deps
+          source .venv/bin/activate
+          poetry install --no-interaction --no-ansi
+          aligned compile
+
+      - name: Archive new aligned contract
+        uses: actions/upload-artifact@v3
+        with:
+          name: aligned-contract-${{ env.GITHUB_SHA }}
+          path: contract_store.json
+          retention-days: 1
+
+
+  check-for-contract-issues:
+    needs: generate-new-contract
     runs-on: ubuntu-22.04
     timeout-minutes: 10
 
@@ -73,7 +102,7 @@ jobs:
       - name: Download new schema
         uses: actions/download-artifact@v3
         with:
-          name: aligned-schema-${{ env.GITHUB_SHA }}
+          name: aligned-contract-${{ env.GITHUB_SHA }}
           path: new-contract
 
       - name: Generate Potentiall Issue Change Report
