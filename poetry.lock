@@ -76,7 +76,7 @@ sql = ["sqlglot (>=22.5.0,<23.0.0)"]
 type = "git"
 url = "https://github.com/MatsMoll/aligned.git"
 reference = "matsei/load-dataset-as-job"
-resolved_reference = "820179dedf5ae76cc0b1adbdc3ac205f23fdf36d"
+resolved_reference = "891c9fab44c5af58ff3609306b73c0e6dc45d482"
 
 [[package]]
 name = "aniso8601"

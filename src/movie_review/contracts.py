@@ -27,6 +27,7 @@ MovieReviewEmbedding = ollama_embedding_contract(
     model="nomic-embed-text",
     endpoint="http://host.docker.internal:11434",
     contract_name="movie_review_embedding",
+    contacts=["@MatsMoll"]
 )
 
 review_embedding = MovieReviewEmbedding()
