@@ -1,5 +1,5 @@
-from typing import Any
-from dataclasses import dataclass
+from typing import Any, Protocol
+from dataclasses import dataclass, field
 from aligned import FeatureStore
 import mlflow
 from mlflow.models import ModelSignature
@@ -37,17 +37,44 @@ class AlignedModel(mlflow.pyfunc.PythonModel):
     def predict(self, context, input: pl.DataFrame) -> pl.Series:
         return self.model.predict(unpack_embeddings(input))
 
-class ModelRegristry:
+
+class ModelRegristry(Protocol):
 
     def store_model(self, model: AlignedModel, store: FeatureStore) -> str:
         raise NotImplementedError(type(self))
 
-    def load_model_with_id(self, id: str) -> AlignedModel:
+    def load_model_with_id(self, id: str) -> AlignedModel | None:
         raise NotImplementedError(type(self))
 
-    def load_model(self, name: str) -> AlignedModel:
+    def load_model(self, name: str) -> AlignedModel | None:
         raise NotImplementedError(type(self))
 
+
+class InMemoryModelRegristry(ModelRegristry):
+
+    models: dict[str, AlignedModel]
+
+    def __init__(self, models: dict[str, AlignedModel] | None = None):
+        self.models = models or {}
+
+    def store_model(self, model: AlignedModel, store: FeatureStore) -> str:
+        from uuid import uuid4
+
+        id = str(uuid4())
+        self.models[id] = model
+        return id
+
+    def load_model_with_id(self, id: str) -> AlignedModel | None:
+        return self.models.get(id)
+
+    def load_model(self, name: str) -> AlignedModel | None:
+        for model in self.models.values():
+            if model.model_name == name:
+                return model
+
+        return None
+
+    
 
 def signature_for_model(model: AlignedModel, store: FeatureStore) -> ModelSignature:
     from mlflow.types.schema import ColSpec, Schema, DataType, TensorSpec
@@ -140,20 +167,19 @@ class MlFlowModelRegristry(ModelRegristry):
         return info.model_uri
 
 
-    def load_model_with_id(self, id: str) -> AlignedModel:
+    def load_model_with_id(self, id: str) -> AlignedModel | None:
 
         model = mlflow.pyfunc.load_model(id).unwrap_python_model()
         if isinstance(model, AlignedModel):
             return model
 
-        raise ValueError(f"Model is not an AlignedModel, got {type(model)}")
+        return None
 
 
-    def load_model(self, name: str, alias: str = "Champion") -> AlignedModel:
-        print(f"Loading model {name} from MLFlow")
+    def load_model(self, name: str, alias: str = "Champion") -> AlignedModel | None:
         uri = f"models:/{name}@{alias}"
         model = mlflow.pyfunc.load_model(uri).python_model
         if isinstance(model, AlignedModel):
             return model
 
-        raise ValueError(f"Model {name} is not an AlignedModel, got {type(model)}")
+        return None

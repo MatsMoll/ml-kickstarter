@@ -1,7 +1,7 @@
 from aligned import EventTimestamp, model_contract, UInt64
 from aligned.exposed_model.mlflow import mlflow_server
 
-from src.contracts.wine import Wine, dataset_dir
+from src.wine.wine import Wine, dataset_dir
 
 wine = Wine()
 

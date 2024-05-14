@@ -1,0 +1,90 @@
+name: CI project
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test.yml'
+      - 'src/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-project:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build docker images
+        run: docker-compose -f docker-compose.yaml build test-action
+
+      - name: Test
+        run: docker-compose -f docker-compose.yaml run test-action
+
+
+  generate-new-schema:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate current schema
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install --no-interaction --no-ansi
+          aligned compile
+
+      - name: Archive new aligned schema
+        uses: actions/upload-artifact@v3
+        with:
+          name: aligned-schema-${{ env.GITHUB_SHA }}
+          path: feature-store.json
+          retention-days: 1
+
+
+  check-for-new-schema:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Install Aligned
+        run: pip install git+https://github.com/MatsMoll/aligned.git@matsei/load-dataset-as-job
+
+      - name: Download current schema
+        uses: actions/download-artifact@v3
+        with:
+          name: aligned-latest
+          path: current-contract
+
+      - name: Download new schema
+        uses: actions/download-artifact@v3
+        with:
+          name: aligned-schema-${{ env.GITHUB_SHA }}
+          path: new-contract
+
+      - name: Generate Potentiall Issue Change Report
+        id: contract-update-report
+        run: |
+          echo "markdown=$(aligned check-updates --updated-contract new-contract/feature-store.json --reference-contract feature-store.json)" >> $GITHUB_OUTPUT
+
+      - name: Notify about potentiall issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: ${{ steps.contract-update-report.outputs.markdown }}
+            })
+
+
+

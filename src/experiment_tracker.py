@@ -1,8 +1,9 @@
+from typing import Protocol
 import mlflow
 from contextlib import contextmanager
 
 
-class ExperimentTracker:
+class ExperimentTracker(Protocol):
 
     @contextmanager
     def start_run(self, run_name: str):
@@ -29,3 +30,17 @@ class MlFlowExperimentTracker(ExperimentTracker):
 
     def log_metric(self, key: str, value: float):
         mlflow.log_metric(key, value)
+
+class StdoutExperimentTracker(ExperimentTracker):
+
+    @contextmanager
+    def start_run(self, run_name: str):
+        print(f"Starting run {run_name}")
+        yield
+        print(f"Ending run {run_name}")
+
+    def log_model_params(self, params: dict):
+        print(f"Logging params: {params}")
+
+    def log_metric(self, key: str, value: float):
+        print(f"Logging metric {key}: {value}")

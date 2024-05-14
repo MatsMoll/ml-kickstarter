@@ -25,7 +25,8 @@ When starting a new AI project, here is the intended development flow.
 
 ### 1. Formulate the AI problem, and the expected AI output.
 
-E.g. 
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following: 
+
 ```python
 from aligned import String, Bool, model_contract
 
@@ -80,7 +81,7 @@ class WineIsHighQuality:
     ...
 ```
 
-### 3. Create a training pipeline and train the model
+### 3. Create a training pipeline
 
 Setup your Prefect training pipeline, which is just regular python methods with some decorator around them.
 
@@ -96,13 +97,19 @@ Train the model by using the Prefect UI.
 
 ![Prefect UI training run](assets/prefect-train-model.png)
 
-### 5. Spin up a serving end-point
+### 5. Manage the Models
+
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+
+### 6. Spin up a serving end-point
 
 Figure out what the url of the model is and serve the ML model.
 
 View the `wine-model` in `docker-compose.yaml` for an example.
 
-### 6. Use the model
+### 7. Use the model
 
 To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
 
@@ -136,7 +143,7 @@ class MoviewReviewIsNegative:
     )
 ```
 
-### 7. Evaluate Online Predictions
+### 8. Evaluate Online Predictions
 Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
 
 This can also be done through the aligned UI in the evaluation tab. 
@@ -145,7 +152,9 @@ Here can different models also be compared against each other if you have added 
 ```python
 @model_contract(...)
 class MoviewReviewIsNegative:
-    pass
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
 ```
 
 ![Evaluate Models](assets/evaluate-model.png)

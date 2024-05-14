@@ -4,7 +4,6 @@ from prefect import serve
 from src.pipelines.train import train_sentiment, train_sentiment_test
 
 def listen_to_work():
-    print("Setting up listners")
     
     serve(*[
         train_sentiment.to_deployment("train_sentiment", tags=["ml"]),
