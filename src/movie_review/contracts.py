@@ -24,7 +24,7 @@ review = MovieReview()
 MovieReviewEmbedding = ollama_embedding_contract(
     input=review.text,
     entities=review.file,
-    model="all-minilm",
+    model="nomic-embed-text",
     endpoint="http://host.docker.internal:11434",
     contract_name="movie_review_embedding",
     contacts=["@MatsMoll"]
@@ -41,7 +41,7 @@ review_embedding = MovieReviewEmbedding()
     ],
     output_source=dataset_dir.csv_at("predictions.csv"),
     exposed_model=mlflow_server(
-        host="http://movie_review_is_negative:8080",
+        host="http://movie-review-is-negative:8080",
         model_name="movie_review_is_negative",
         model_alias="champion",
     ),

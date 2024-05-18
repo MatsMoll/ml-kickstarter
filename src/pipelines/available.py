@@ -3,13 +3,16 @@ from prefect import serve
 
 from src.pipelines.train import train_sentiment, train_sentiment_test
 
-def listen_to_work():
-    
-    serve(*[
+def all_pipelines():
+    return [
         train_sentiment.to_deployment("train_sentiment", tags=["ml"]),
         train_sentiment_test.to_deployment("train_sentiment_test", tags=["ml"]),
-    ])
-    
+    ]
+
+
+def listen_to_work():
+    serve(*all_pipelines()) # type: ignore
+
 
 async def main():
     from watchfiles import arun_process

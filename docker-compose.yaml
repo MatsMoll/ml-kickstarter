@@ -1,36 +1,44 @@
 version: '3'
 services:
-  mlflow-tracker:
+  base-image:
     image: project-base
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: ["mlflow", "server", "--backend-store-uri", "file:///app/mlflow-server", "--host", "0.0.0.0", "--port", "8000"]
+    command: "echo Hello World"
+      
+  mlflow-tracker:
+    image: project-base
+    command: "mlflow server --backend-store-uri file:///app/mlflow-server --host 0.0.0.0 --port 8000"
     ports:
       - 7999:8000
     volumes:
       - ./src:/app/src
       - ./mlflow:/app/mlflow-server
+    depends_on:
+      - base-image
 
-  movie_review_is_negative:
+  movie-review-is-negative:
     image: project-serve
     build:
       context: .
       dockerfile: docker/Dockerfile.serve
-    command: ["mlflow", "models", "serve", "-m", "models:/movie_review_is_negative@champion", "--port", "8080", "--host", "0.0.0.0", "--no-conda", "--enable-mlserver"]
+    command: "mlflow models serve -m models:/movie_review_is_negative@champion --port 8080 --host 0.0.0.0 --no-conda --enable-mlserver"
     ports:
       - 8081:8080
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
+    depends_on:
+      - base-image
 
   wine-model:
     image: project-serve
     build:
       context: .
       dockerfile: docker/Dockerfile.serve
-    command: ["mlflow", "models", "serve", "-m", "models:/is_high_quality_wine@champion", "--port", "8080", "--host", "0.0.0.0", "--no-conda", "--enable-mlserver"]
+    command: "mlflow models serve -m models:/is_high_quality_wine@champion --port 8080 --host 0.0.0.0 --no-conda --enable-mlserver"
     ports:
       - 8080:8080
     environment:
@@ -39,27 +47,15 @@ services:
       - ./src:/app/src
     extra_hosts:
       - host.docker.internal:host-gateway
-
-  trainer:
-    image: project-base
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    command: ["python", "-m", "src.pipelines.train"]
-    environment:
-      - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
-    volumes:
-      - ./src:/app/src
-      - ./data:/app/data
-    extra_hosts:
-      - host.docker.internal:host-gateway
+    depends_on:
+      - base-image
 
   aligned-catalog:
     image: project-catalog
     build:
       context: .
       dockerfile: docker/Dockerfile.catalog
-    command: ["python", "-m", "streamlit", "run", "app.py", "--server.port", "8501", "--server.fileWatcherType", "poll"]
+    command: "python -m streamlit run app.py --server.port 8501 --server.fileWatcherType poll"
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
@@ -75,7 +71,7 @@ services:
 
   prefect-server:
     image: prefecthq/prefect:2-python3.10
-    command: ["prefect", "server", "start", "--port=4200", "--host=0.0.0.0"]
+    command: "prefect server start --port=4200 --host=0.0.0.0"
     ports:
       - 4201:4200
 
@@ -84,7 +80,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.dev
-    command: ["python", "-m", "src.pipelines.available"]
+    command: "python -m src.pipelines.available"
     volumes:
       - ./src:/app/src
       - ./data:/app/data
@@ -94,16 +90,20 @@ services:
       - "MLFLOW_TRACKING_URI=http://mlflow-tracker:8000"
     extra_hosts:
       - host.docker.internal:host-gateway
+    depends_on:
+      - base-image
 
   test-action:
     image: project-dev
     build:
       context: .
       dockerfile: docker/Dockerfile.dev
-    command: ["python", "-m", "pytest", "-rev", "tests"]
+    command: "python -m pytest -rev tests"
     volumes:
       - ./src:/app/src
       - ./data:/app/data
+    depends_on:
+      - base-image
 
   # ollama:
   #   container_name: ollama

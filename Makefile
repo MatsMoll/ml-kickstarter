@@ -1,12 +1,15 @@
 
+.PHONY: clean
+build:
+	docker system prune -f
 
-.PHONY: up
+.PHONY: build
+build:
+	docker compose build
+
+.PHONY: infra-up
 infra-up: 
-	docker compose up aligned-catalog mlflow-tracker
-
-.PHONY: train
-train: 
-	docker compose run trainer
+	docker compose up aligned-catalog mlflow-tracker prefect-server pipeline-worker
 
 .PHONY: ollama
 ollama:
@@ -15,6 +18,11 @@ ollama:
 	echo "Container ID: $$CONTAINER_ID" ; \
 	docker exec $$CONTAINER_ID ollama pull nomic-embed-text
 
-.PHONY: models
+.PHONY: models-up
 models-up:
-	docker compose up movie_review_is_negative wine-model
+	docker compose up movie-review-is-negative wine-model
+
+.PHONY: test
+test:
+	docker compose run test-action
+

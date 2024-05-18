@@ -3,8 +3,9 @@
 This is a kickstarter project for an end-to-end ML.
 
 The goal of this project was to create the project structure that I would love to use my self.
-Therefore, it is optimized for **local development** meaning faster iteration speeds.
-Furthermore, to make projects reliable and easy to deploy will everything be developed through Docker.
+Therefore, it is optimized for **local development** meaning faster iteration speed.
+
+Furthermore, to make projects reliable, reproducable and easy to deploy will everything be developed through **Docker**, but with **hot reloading**. Meaning less build time and as a result faster iteration speeds.
 
 ## AI / ML Capabilities
 - LLM / embedding server using Ollama
@@ -168,6 +169,8 @@ This projects contain a simple `Makefile` to simplify the development.
 This spins up some basic infrastructure.
 - Experiment Tracking server at [localhost:7999](http://localhost:7999)
 - Data catalog at [localhost:8503](http://localhost:8503)
+- Workflow orchestrator at [localhost:4201](http://localhost:4201)
+- A worker node runs pipelines - refreshes on file save
 
 ### `make models-up`
 Spins up the differnet trained MLFlow models.
@@ -177,9 +180,14 @@ Spins up the differnet trained MLFlow models.
 
 ### `make ollama`
 
-Spins up the Ollama server and pulls an embedding model down.
+Spins up the Ollama server and pulls an embedding model down. 
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
 
-### `make train`
+### `make test`
+Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
 
-Runs a training pipeline for the quality `wine_model`.
+### `make build`
+Rebuilds all images if needed.
 
+### `make clean`
+Removes all unused docker images.
