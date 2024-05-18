@@ -26,7 +26,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build docker images
-        run: docker-compose -f docker-compose.yaml build test-action
+        run: docker-compose -f docker-compose.yaml build base-image && docker-compose -f docker-compose.yaml build test-action
 
       - name: Test
         run: docker-compose -f docker-compose.yaml run test-action
