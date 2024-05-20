@@ -1,12 +1,14 @@
 from pathlib import Path
 from prefect import serve
 
-from src.pipelines.train import train_sentiment, train_sentiment_test
+from src.wine.train import train_wine_model
+from src.movie_review.train import train_sentiment, train_sentiment_test
 
 def all_pipelines():
     return [
-        train_sentiment.to_deployment("train_sentiment", tags=["ml"]),
-        train_sentiment_test.to_deployment("train_sentiment_test", tags=["ml"]),
+        train_sentiment.to_deployment(train_sentiment.name, tags=["ml", "movie_review_is_negative"]),
+        train_sentiment_test.to_deployment(train_sentiment_test.name, tags=["ml", "movie_review_is_negative"]),
+        train_wine_model.to_deployment(train_wine_model.name, tags=["ml", "is_high_quality_wine"]),
     ]
 
 

@@ -1,13 +1,61 @@
 from typing import Any, Protocol
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from aligned import FeatureStore
+from aligned.schemas.feature import Feature
+
 import mlflow
 from mlflow.models import ModelSignature
 import polars as pl
 import numpy as np
 
 
-def unpack_embeddings(input: pl.DataFrame) -> pl.DataFrame:
+class Model(Protocol):
+
+    def fit(self, X: pl.DataFrame, y: pl.Series):
+        ...
+
+    def predict(self, X: pl.DataFrame):
+        ...
+
+    def get_params(self) -> dict:
+        ...
+
+    def set_params(self, **kwargs) -> None:
+        ...
+
+
+def unpack_embeddings(input: pl.DataFrame, features: list[Feature]) -> pl.DataFrame:
+    """
+    Unpacks all embedding features in the input DataFrame.
+
+    This is needed as most models do not accept nested data structures.
+    Therefore, this will transform the input to one 1D vector.
+    """
+
+    list_features = [
+        feature.name
+        for feature in features
+        if feature.dtype.is_embedding
+    ]
+    if not list_features:
+        return input
+
+    input = input.with_columns([
+        pl.col(feature).list.to_struct(n_field_strategy="max_width")
+        for feature in list_features
+    ])
+    input = input.unnest(list_features)
+
+    return input.select(pl.all().exclude(list_features))
+
+
+def unpack_lists(input: pl.DataFrame) -> pl.DataFrame:
+    """
+    Unpacks all list features in the input DataFrame.
+
+    This is needed as most models do not accept nested data structures.
+    Therefore, this will transform the input to one 1D vector.
+    """
 
     if isinstance(input, dict):
         input = pl.DataFrame(input)
@@ -35,7 +83,7 @@ class AlignedModel(mlflow.pyfunc.PythonModel):
     model_contract_version: str | None
 
     def predict(self, context, input: pl.DataFrame) -> pl.Series:
-        return self.model.predict(unpack_embeddings(input))
+        return self.model.predict(unpack_lists(input))
 
 
 class ModelRegristry(Protocol):
@@ -48,6 +96,7 @@ class ModelRegristry(Protocol):
 
     def load_model(self, name: str) -> AlignedModel | None:
         raise NotImplementedError(type(self))
+
 
 
 class InMemoryModelRegristry(ModelRegristry):
@@ -77,8 +126,8 @@ class InMemoryModelRegristry(ModelRegristry):
     
 
 def signature_for_model(model: AlignedModel, store: FeatureStore) -> ModelSignature:
-    from mlflow.types.schema import ColSpec, Schema, DataType, TensorSpec
-    from aligned.schemas.feature import FeatureType, Feature
+    from mlflow.types.schema import ColSpec, Schema, TensorSpec
+    from aligned.schemas.feature import Feature
 
     model_contract = store.model(model.model_name)
     if model.model_contract_version:
@@ -128,6 +177,7 @@ def signature_for_model(model: AlignedModel, store: FeatureStore) -> ModelSignat
     )
 
 class MlFlowModelRegristry(ModelRegristry):
+
 
     def store_model(self, model: AlignedModel, store: FeatureStore) -> str:
         client = mlflow.client.MlflowClient()

@@ -62,8 +62,6 @@ services:
       - ./src:/app/src
       - ./data:/app/data
       - ./load_contracts.py:/app/custom_store.py
-      - ../aligned-managed-catalog/:/app/
-      - ../aligned/aligned:/usr/local/lib/python3.11/site-packages/aligned/
     ports:
       - 8503:8501
     extra_hosts:
@@ -84,7 +82,6 @@ services:
     volumes:
       - ./src:/app/src
       - ./data:/app/data
-      - ../aligned/aligned:/usr/local/lib/python3.11/site-packages/aligned/
     environment:
       - "PREFECT_API_URL=http://prefect-server:4200/api"
       - "MLFLOW_TRACKING_URI=http://mlflow-tracker:8000"

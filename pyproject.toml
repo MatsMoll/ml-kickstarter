@@ -8,9 +8,9 @@ packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-aligned = { git = "https://github.com/MatsMoll/aligned.git", branch="matsei/load-dataset-as-job", extras=["ollama"]}
+aligned = { version="0.0.96", extras=["ollama"] }
 mlflow = "^2.11.3"
-prefect = "2.18.0"
+prefect = "2.19.0"
 
 [tool.poetry.group.dev.dependencies]
 watchfiles = "^0.21.0"
