@@ -38,7 +38,7 @@ async def test_generic_classifier_train_pipeline_using_prefect():
     model = RandomForestClassifier()
 
     @flow(name="test")
-    def test_flow():
+    async def test_flow():
         await classifier_from_train_test_validation_set(
             store=store,
             model_contract=MovieReviewIsNegative.metadata.name,
@@ -55,7 +55,7 @@ async def test_generic_classifier_train_pipeline_using_prefect():
         )
 
     with prefect_test_harness():
-        test_flow()
+        await test_flow()
 
     assert len(registry.models) == 1
 
