@@ -98,7 +98,7 @@ jobs:
 
     steps:
       - name: Install Aligned
-        run: pip install git+https://github.com/MatsMoll/aligned.git@matsei/load-dataset-as-job
+        run: pip install aligned
 
       - name: Download current schema
         uses: actions/download-artifact@v3
