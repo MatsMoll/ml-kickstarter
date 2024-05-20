@@ -220,11 +220,16 @@ async def classifier_from_train_test_validation_set(
     train_size: float = 0.6,
     test_size: float = 0.2,
     model_contract_version: str | None = None,
-    param_search: dict | None = None
+    param_search: dict | None = None,
+    registry: ModelRegristry | None = None,
+    tracker: ExperimentTracker | None = None
 ):
 
-    registry = MlFlowModelRegristry()
-    tracker = MlFlowExperimentTracker()
+    if not registry:
+        registry = MlFlowModelRegristry()
+
+    if not tracker:
+        tracker = MlFlowExperimentTracker()
 
     model_store = store.model(model_contract)
 

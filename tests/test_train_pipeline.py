@@ -8,7 +8,7 @@ from prefect.testing.utilities import prefect_test_harness
 
 from src.model_registry import InMemoryModelRegristry
 from src.experiment_tracker import StdoutExperimentTracker
-from src.pipelines.train import generic_classifier_train_pipeline, generic_classifier_train_pipeline_tasks
+from src.pipelines.train import classifier_from_train_test_validation_set
 
 async def setup_store():
     store = await ContractStore.from_dir(".")
@@ -28,28 +28,6 @@ async def setup_store():
     return store
 
 @pytest.mark.asyncio
-async def test_generic_classifier_train_pipeline():
-    from src.movie_review.contracts import MovieReviewIsNegative
-
-    store = await setup_store()
-    registry = InMemoryModelRegristry()
-    tracker = StdoutExperimentTracker()
-    model = RandomForestClassifier()
-
-    await generic_classifier_train_pipeline(
-        store=store,
-        model_contract=MovieReviewIsNegative.metadata.name,
-        entities={
-            "file": [
-                str(i) for i in range(100)
-            ],
-        },
-        model=model, # type: ignore
-        registry=registry,
-        tracker=tracker,
-    )
-
-@pytest.mark.asyncio
 async def test_generic_classifier_train_pipeline_using_prefect():
     from src.movie_review.contracts import MovieReviewIsNegative
 
@@ -59,7 +37,7 @@ async def test_generic_classifier_train_pipeline_using_prefect():
     model = RandomForestClassifier()
 
     with prefect_test_harness():
-        await generic_classifier_train_pipeline_tasks(
+        await classifier_from_train_test_validation_set(
             store=store,
             model_contract=MovieReviewIsNegative.metadata.name,
             entities={
