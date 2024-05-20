@@ -4,6 +4,7 @@ from aligned import ContractStore, FeatureLocation
 from aligned.data_source.batch_data_source import DummyDataSource
 from sklearn.ensemble import RandomForestClassifier
 
+from prefect import flow
 from prefect.testing.utilities import prefect_test_harness
 
 from src.model_registry import InMemoryModelRegristry
@@ -36,7 +37,8 @@ async def test_generic_classifier_train_pipeline_using_prefect():
     tracker = StdoutExperimentTracker()
     model = RandomForestClassifier()
 
-    with prefect_test_harness():
+    @flow(name="test")
+    def test_flow():
         await classifier_from_train_test_validation_set(
             store=store,
             model_contract=MovieReviewIsNegative.metadata.name,
@@ -51,6 +53,9 @@ async def test_generic_classifier_train_pipeline_using_prefect():
             registry=registry,
             tracker=tracker,
         )
+
+    with prefect_test_harness():
+        test_flow()
 
     assert len(registry.models) == 1
 
