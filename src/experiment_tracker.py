@@ -69,6 +69,9 @@ class StdoutExperimentTracker(ExperimentTracker):
     def log_metric(self, key: str, value: float):
         print(f"Logging metric {key}: {value}")
 
+    def log_figure(self, figure: Figure, name: str) -> None:
+        pass
+
     def report_url(self) -> str | None:
         return None
 
