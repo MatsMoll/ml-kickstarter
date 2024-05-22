@@ -11,7 +11,7 @@ services:
     image: project-base
     command: "mlflow server --backend-store-uri file:///app/mlflow-server/experiments --artifacts-destination file:///app/mlflow-server/artifacts --host 0.0.0.0 --port 8000"
     ports:
-      - 7999:8000
+      - 7050:8000
     volumes:
       - ./src:/app/src
       - ./mlflow:/app/mlflow-server
@@ -69,7 +69,7 @@ services:
       - ./data:/app/data
       - ./load_contracts.py:/app/custom_store.py
     ports:
-      - 8503:8501
+      - 9000:8501
     extra_hosts:
       - host.docker.internal:host-gateway
 

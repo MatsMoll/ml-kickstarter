@@ -19,12 +19,30 @@ Furthermore, to make projects reliable, reproducable and easy to deploy will eve
 - Data quality management using Aligned
 - Data annotation using Aligned
 
+## Software Development Capabilities
+- Complete local development
+- Containerized development for easier deployment
+- Hot reload updatest to orchestation pipelines
+- Hot reload model serving on promotion
+- CI with unit and integration test on PRs
+- CI warning for potential drift detection
+
 ## Intended Development Flow
 
 When starting a new AI project, here is the intended development flow.
 
+### 1. Spin up the infra
+First we need to start the needed infrastructure to experiment and run our projects.
 
-### 1. Formulate the AI problem, and the expected AI output.
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+
+### 2. Formulate the AI problem, and the expected AI output.
 
 E.g. if we want to predict if a review is either positive or negative, it could look something like the following: 
 
@@ -42,7 +60,7 @@ class MovieReviewIsNegative:
 ```
 
 
-### 2. Find relevant features.
+### 3. Find relevant features.
 We can use the aligned UI to find which features that could be interesting for our ML use-case.
 
 ![Find features in Aligned UI](assets/find-features.png)
@@ -82,33 +100,36 @@ class WineIsHighQuality:
     ...
 ```
 
-### 3. Create a training pipeline
+### 4. Create a training pipeline
 
 Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`. 
 
 Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
 
-### 4. Train the model
+### 5. Train the model
 
 Train the model by using the Prefect UI.
 
 ![Prefect UI training run](assets/prefect-train-model.png)
 
-### 5. Manage the Models
+### 6. Manage the Models
 
 View training runs and manage which models should be deployed, through MLFlow.
 
 ![Track Models](assets/track-training-runs.png)
 
-### 6. Spin up a serving end-point
+### 7. Spin up a serving end-point
 
 Figure out what the url of the model is and serve the ML model.
 
 View the `wine-model` in `docker-compose.yaml` for an example.
 
-### 7. Use the model
+### 8. Use the model
 
 To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`. 
+This will reload the models when you promote a new model.
 
 Then we can predict over different datasets, or manually inputted data.
 
@@ -140,7 +161,7 @@ class MoviewReviewIsNegative:
     )
 ```
 
-### 8. Evaluate Online Predictions
+### 9. Evaluate Online Predictions
 Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
 
 This can also be done through the aligned UI in the evaluation tab. 
@@ -156,17 +177,9 @@ class MoviewReviewIsNegative:
 
 ![Evaluate Models](assets/evaluate-model.png)
 
-## Get Started
+## Other make commands
 
 This projects contain a simple `Makefile` to simplify the development.
-
-### `make infra-up`
-
-This spins up some basic infrastructure.
-- Experiment Tracking server at [localhost:7999](http://localhost:7999)
-- Data catalog at [localhost:8503](http://localhost:8503)
-- Workflow orchestrator at [localhost:4201](http://localhost:4201)
-- A worker node runs pipelines - refreshes on file save
 
 ### `make models-up`
 Spins up the differnet trained MLFlow models.
