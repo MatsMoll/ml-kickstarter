@@ -84,11 +84,7 @@ class WineIsHighQuality:
 
 ### 3. Create a training pipeline
 
-Setup your Prefect training pipeline, which is just regular python methods with some decorator around them.
-
-You can see an example of how you can use aligned to create, and store datasets, which can later be used for debugging, monitoring etc.
-
-When you have trained and stored a model through ML flow
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`. 
 
 Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
 

@@ -6,6 +6,7 @@ data/sentiment/datasets.json
 data/movie_review_is_negative
 mlflow
 
+data/**/datasets/**/*
 
 # Dont check-in database folder
 .pg/*

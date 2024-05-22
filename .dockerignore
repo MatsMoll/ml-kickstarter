@@ -3,3 +3,4 @@ mlflow
 docker
 docker-compose.yaml
 .git
+tests

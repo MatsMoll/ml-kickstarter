@@ -3,7 +3,7 @@ from prefect import flow
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
-from src.pipelines.train import classifier_from_train_test_validation_set, load_store
+from src.pipelines.train import classifier_from_train_test_set, load_store
 
 @flow
 async def train_wine_model(
@@ -24,7 +24,7 @@ async def train_wine_model(
     dataset_dir = FileSource.directory("data/wine/datasets")
     total_size = train_size + test_size + validate_size
 
-    await classifier_from_train_test_validation_set(
+    await classifier_from_train_test_set(
         store=store,
         model_contract="is_high_quality_wine",
         entities=entities,

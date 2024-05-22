@@ -1,3 +1,4 @@
-FROM aligned-catalog-free
+FROM matsmoll/aligned-catalog-free
 
-RUN pip install mlflow prefect
+COPY poetry.lock pyproject.toml /app/
+RUN poetry install --without dev

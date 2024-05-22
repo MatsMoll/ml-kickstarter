@@ -1,6 +1,6 @@
 
 .PHONY: clean
-build:
+clean:
 	docker system prune -f
 
 .PHONY: build

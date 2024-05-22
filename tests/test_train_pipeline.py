@@ -9,7 +9,7 @@ from prefect.testing.utilities import prefect_test_harness
 
 from src.model_registry import InMemoryModelRegristry
 from src.experiment_tracker import StdoutExperimentTracker
-from src.pipelines.train import classifier_from_train_test_validation_set
+from src.pipelines.train import classifier_from_train_test_set
 
 async def setup_store():
     store = await ContractStore.from_dir(".")
@@ -39,7 +39,7 @@ async def test_generic_classifier_train_pipeline_using_prefect():
 
     @flow(name="test")
     async def test_flow():
-        await classifier_from_train_test_validation_set(
+        await classifier_from_train_test_set(
             store=store,
             model_contract=MovieReviewIsNegative.metadata.name,
             entities={

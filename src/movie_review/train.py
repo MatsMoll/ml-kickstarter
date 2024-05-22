@@ -2,7 +2,7 @@ from prefect import flow, task
 from sklearn.ensemble import RandomForestClassifier
 from aligned import ContractStore, FileSource
 
-from src.pipelines.train import classifier_from_train_test_validation_set, load_store
+from src.pipelines.train import classifier_from_train_test_set, load_store
 
 import numpy as np
 import polars as pl
@@ -24,9 +24,8 @@ async def equal_distribution_entities(number_of_records: int, store: ContractSto
 async def train_sentiment(
     number_of_records: int = 1000, 
     search_params: dict | None = None,
-    train_size: float = 0.6,
-    test_size: float = 0.2,
-    validate_size: float = 0.2,
+    train_size: float = 0.75,
+    test_size: float = 0.15,
     dataset_id: str | None = None,
 ):
     store: ContractStore = await load_store()
@@ -42,10 +41,10 @@ async def train_sentiment(
     )
     dataset_dir = FileSource.directory(f"data/movie_review_is_negative/datasets")
 
-    total_size = train_size + test_size + validate_size
+    total_size = train_size + test_size
 
 
-    await classifier_from_train_test_validation_set(
+    await classifier_from_train_test_set(
         store=store,
         model_contract="movie_review_is_negative",
         entities=entities,

@@ -9,7 +9,7 @@ services:
       
   mlflow-tracker:
     image: project-base
-    command: "mlflow server --backend-store-uri file:///app/mlflow-server --host 0.0.0.0 --port 8000"
+    command: "mlflow server --backend-store-uri file:///app/mlflow-server/experiments --artifacts-destination file:///app/mlflow-server/artifacts --host 0.0.0.0 --port 8000"
     ports:
       - 7999:8000
     volumes:
@@ -23,13 +23,16 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.serve
-    command: "mlflow models serve -m models:/movie_review_is_negative@champion --port 8080 --host 0.0.0.0 --no-conda --enable-mlserver"
+    command: "python -m serve_model_locally serve-mlflow-model movie_review_is_negative"
     ports:
       - 8081:8080
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
+      - ./serve_model_locally.py:/app/serve_model_locally.py
+      # Adding mlflow to automatically update on model promption
+      - ./mlflow/experiments/models:/app/mlflow/experiments/models
     depends_on:
       - base-image
 
@@ -38,13 +41,16 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.serve
-    command: "mlflow models serve -m models:/is_high_quality_wine@champion --port 8080 --host 0.0.0.0 --no-conda --enable-mlserver"
+    command: "python -m serve_model_locally serve-mlflow-model is_high_quality_wine"
     ports:
       - 8080:8080
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
+      - ./serve_model_locally.py:/app/serve_model_locally.py
+      # Adding mlflow to automatically update on model promption
+      - ./mlflow/experiments/models:/app/mlflow/experiments/models
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:

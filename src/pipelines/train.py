@@ -210,7 +210,7 @@ async def evaluate_model(
 
 
 
-async def classifier_from_train_test_validation_set(
+async def classifier_from_train_test_set(
     store: ContractStore,
     model_contract: str,
     entities: ConvertableToRetrivalJob | RetrivalJob,
@@ -236,19 +236,17 @@ async def classifier_from_train_test_validation_set(
     if model_contract_version:
         model_store = model_store.using_version(model_contract_version)
 
-    train, test, validate = await generate_train_test_validate(
+    train, test = await generate_train_test(
         model_store, 
         entities, 
-        dataset_dir, 
-        train_size, 
-        test_size,
-        dataset_id=dataset_id
+        dataset_dir=dataset_dir, 
+        dataset_id=dataset_id,
+        train_size=train_size, 
     )
 
     datasets = [
         ("train", train),
         ("test", test),
-        ("validate", validate)
     ]
 
     with tracker.start_run(run_name=model_contract):
