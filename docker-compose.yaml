@@ -1,0 +1,136 @@
+version: '3'
+services:
+  base-image:
+    image: project-base
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: "echo Hello World"
+      
+  mlflow-tracker:
+    image: project-base
+    command: "mlflow server --backend-store-uri file:///app/mlflow-server/experiments --artifacts-destination file:///app/mlflow-server/artifacts --host 0.0.0.0 --port 8000"
+    ports:
+      - 7999:8000
+    volumes:
+      - ./src:/app/src
+      - ./mlflow:/app/mlflow-server
+    depends_on:
+      - base-image
+
+  movie-review-is-negative:
+    image: project-serve
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.serve
+    command: "python -m serve_model_locally serve-mlflow-model movie_review_is_negative"
+    ports:
+      - 8081:8080
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
+    volumes:
+      - ./src:/app/src
+      - ./serve_model_locally.py:/app/serve_model_locally.py
+      # Adding mlflow to automatically update on model promption
+      - ./mlflow/experiments/models:/app/mlflow/experiments/models
+    depends_on:
+      - base-image
+
+  wine-model:
+    image: project-serve
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.serve
+    command: "python -m serve_model_locally serve-mlflow-model is_high_quality_wine"
+    ports:
+      - 8080:8080
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
+    volumes:
+      - ./src:/app/src
+      - ./serve_model_locally.py:/app/serve_model_locally.py
+      # Adding mlflow to automatically update on model promption
+      - ./mlflow/experiments/models:/app/mlflow/experiments/models
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - base-image
+
+  aligned-catalog:
+    image: project-catalog
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.catalog
+    command: "python -m streamlit run app.py --server.port 8501 --server.fileWatcherType poll"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./load_contracts.py:/app/custom_store.py
+    ports:
+      - 8503:8501
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  prefect-server:
+    image: prefecthq/prefect:2-python3.10
+    command: "prefect server start --port=4200 --host=0.0.0.0"
+    ports:
+      - 4201:4200
+
+  pipeline-worker:
+    image: project-dev
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    command: "python -m src.pipelines.available"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+    environment:
+      - "PREFECT_API_URL=http://prefect-server:4200/api"
+      - "MLFLOW_TRACKING_URI=http://mlflow-tracker:8000"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - base-image
+
+  test:
+    image: project-dev
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    command: "python -m pytest -rev tests"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./tests:/app/tests
+    depends_on:
+      - base-image
+
+  #   # Uncomment below to expose Ollama API outside the container stack
+  # ollama:
+  #   container_name: ollama
+  #   image: ollama/ollama:latest
+  #   pull_policy: always
+  #   tty: true
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./ollama:/root/.ollama
+  #   ports:
+  #     - 11434:11434
+  #
+
+  # ollama-webui:
+  #   image: ghcr.io/open-webui/open-webui
+  #   container_name: ollama-webui
+  #   depends_on:
+  #     - ollama
+  #   ports:
+  #     - 3000:8080
+  #   environment:
+  #     - "OLLAMA_API_BASE_URL=http://ollama:11434/api"
+  #   extra_hosts:
+  #     - host.docker.internal:host-gateway
+  #   restart: unless-stopped

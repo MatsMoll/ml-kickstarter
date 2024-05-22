@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "ml-kickstarter"
+version = "0.1.0"
+description = "A project to kickstart ml projects"
+authors = ["Mats E. Mollestad <mats@mollestad.no>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aligned = { version="0.0.96", extras=["ollama"] }
+mlflow = "^2.11.3"
+prefect = "2.19.0"
+
+[tool.poetry.group.dev.dependencies]
+watchfiles = "^0.21.0"
+pytest-asyncio = "^0.23.6"
+pytest = "^8.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

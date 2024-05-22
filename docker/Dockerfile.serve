@@ -1,0 +1,6 @@
+FROM project-base:latest
+
+RUN pip install mlflow[extras]==2.13.0
+RUN pip install watchfiles
+
+COPY . /app

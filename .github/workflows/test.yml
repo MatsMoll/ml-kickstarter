@@ -1,0 +1,140 @@
+name: Test Updates
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test.yml'
+      - 'src/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+permissions:
+  contents: read # Needed to read the repo
+  actions: read
+  issues: write # Needed to write comments
+  pull-requests: write 
+  id-token: write
+
+jobs:
+  test-project:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build docker images
+        run: docker-compose -f docker-compose.yaml build base-image && docker-compose -f docker-compose.yaml build test
+
+      - name: Test
+        run: docker-compose -f docker-compose.yaml run test
+
+  generate-main-contract:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: 'main'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          version: 1.5.1
+
+      - name: Generate current contract
+        run: |
+          python -m venv .venv --upgrade-deps
+          source .venv/bin/activate
+          poetry install --no-interaction --no-ansi
+          aligned compile
+
+      - name: Archive new aligned contract
+        uses: actions/upload-artifact@v3
+        with:
+          name: contract-latest
+          path: contract_store.json
+          retention-days: 1
+
+
+  generate-new-contract:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          version: 1.5.1
+
+      - name: Generate current contract
+        run: |
+          python -m venv .venv --upgrade-deps
+          source .venv/bin/activate
+          poetry install --no-interaction --no-ansi
+          aligned compile
+
+      - name: Archive new aligned contract
+        uses: actions/upload-artifact@v3
+        with:
+          name: aligned-contract-${{ env.GITHUB_SHA }}
+          path: contract_store.json
+          retention-days: 1
+
+
+  check-for-contract-issues:
+    needs: [generate-new-contract, generate-main-contract]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Install Aligned
+        run: pip install aligned
+
+      - name: Download current schema
+        uses: actions/download-artifact@v3
+        with:
+          name: contract-latest
+          path: current-contract
+
+      - name: Download new schema
+        uses: actions/download-artifact@v3
+        with:
+          name: aligned-contract-${{ env.GITHUB_SHA }}
+          path: new-contract
+
+      - name: Generate Potentiall Issue Change Report
+        id: contract-update-report
+        run: |
+          aligned check-updates --updated-contract new-contract/contract_store.json --reference-contract current-contract/contract_store.json > report.md
+          echo $(cat report.md)
+
+      - name: Notify about potentiall issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'report.md';  // Update this path to your file
+            const body = fs.readFileSync(path, 'utf8').trim();
+            if (!body) {
+              console.log('File is empty, no comment created.');
+              return;
+            }
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+
+
+
