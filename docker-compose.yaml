@@ -96,7 +96,7 @@ services:
     depends_on:
       - base-image
 
-  test-action:
+  test:
     image: project-dev
     build:
       context: .
@@ -109,10 +109,10 @@ services:
     depends_on:
       - base-image
 
+  #   # Uncomment below to expose Ollama API outside the container stack
   # ollama:
   #   container_name: ollama
   #   image: ollama/ollama:latest
-  #   # Uncomment below to expose Ollama API outside the container stack
   #   pull_policy: always
   #   tty: true
   #   restart: unless-stopped

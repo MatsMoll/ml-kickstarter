@@ -42,7 +42,7 @@ async def generate_train_test(
             ) # type: ignore
         )
     )
-    if model_store.dataset_store:
+    if model_store.dataset_store and dataset_dir:
 
         if dataset_id is None:
             dataset_id = flow_run.get_name()
