@@ -1,4 +1,4 @@
-FROM matsmoll/aligned-catalog-free
+FROM matsmoll/aligned-catalog-free:latest
 
 COPY poetry.lock pyproject.toml /app/
 RUN poetry install --without dev
