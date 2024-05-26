@@ -1,6 +1,7 @@
 from aligned import feature_view, String, Bool, FileSource, model_contract
 from aligned.exposed_model.ollama import ollama_embedding_contract
-from aligned.exposed_model.mlflow import mlflow_server
+
+from src.mlflow_model import MLFlowServer
 
 
 dataset_dir = FileSource.directory("data/sentiment")
@@ -39,7 +40,7 @@ review_embedding = MovieReviewEmbedding()
         review_embedding.embedding,
     ],
     output_source=dataset_dir.csv_at("predictions.csv"),
-    exposed_model=mlflow_server(
+    exposed_model=MLFlowServer(
         host="http://movie-review-is-negative:8080",
         model_name="movie_review_is_negative",
         model_alias="champion",
