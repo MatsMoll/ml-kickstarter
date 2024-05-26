@@ -11,7 +11,7 @@ from prefect import get_run_logger, task
 from prefect.runtime import flow_run
 from prefect.artifacts import create_link_artifact
 
-from src.model_registry import MlFlowModelRegristry, AlignedModel, ModelRegristry, Model, unpack_embeddings
+from src.model_registry import MlFlowModelRegristry, ModelRegristry, Model, unpack_embeddings
 from src.experiment_tracker import MlFlowExperimentTracker, ExperimentTracker
 
 
@@ -124,24 +124,23 @@ async def find_best_parameters(
 @task
 async def fit_model(
     model: Model, 
-    train_set: SupervisedJob,
-    model_contract: str,
+    train_set: SupervisedJob
 ) -> Model:
     data = await train_set.to_polars()
     model.fit(
         unpack_embeddings(data.input, list(train_set.request_result.features)), 
         data.labels
     )
-    aligned_model = AlignedModel(model, model_contract, None)
-    return aligned_model
+    return model
 
 @task
 async def store_model(
-    model: AlignedModel,
+    model: Model,
+    model_contract: str,
     store: ContractStore,
     registry: ModelRegristry
 ) -> str:
-    return registry.store_model(model, store)
+    return registry.store_model(model, model_contract, store)
 
 @task
 async def evaluate_model(
@@ -191,7 +190,7 @@ async def evaluate_model(
         unpacked = unpack_embeddings(
             data.input, list(dataset.request_result.features)
         )
-        preds = model.predict(None, unpacked)
+        preds = model.predict(unpacked)
 
         for scorer_name, scorer in model_scorers:
             logger.info(f"Scores: {scorer_name}")
@@ -205,7 +204,7 @@ async def evaluate_model(
 
         for figure_name, figure in estimator_figures:
             logger.info(f"Figure: {figure_name}")
-            display = figure(model.model, unpacked, data.labels).figure_
+            display = figure(model, unpacked, data.labels).figure_
             tracker.log_figure(display, f"{dataset_name}_{figure_name}")
 
 
@@ -255,9 +254,9 @@ async def classifier_from_train_test_set(
             model.set_params(**best_params)
 
         tracker.log_model_params(model.get_params())
-        model = await fit_model(model, quote(train), model_contract)
+        model = await fit_model(model, quote(train))
 
-        model_id = await store_model(model, store, registry)
+        model_id = await store_model(model, model_contract, store, registry)
         await evaluate_model(
             model_id, 
             quote(datasets), 

@@ -1,7 +1,7 @@
 from aligned import EventTimestamp, model_contract, UInt64
-from aligned.exposed_model.mlflow import mlflow_server
 
 from src.wine.wine import Wine, dataset_dir
+from src.mlflow_model import MLFlowServer
 
 wine = Wine()
 
@@ -21,9 +21,8 @@ wine = Wine()
         wine.alcohol,
         wine.is_red_wine
     ],
-    exposed_model=mlflow_server(
+    exposed_model=MLFlowServer(
         host="http://wine-model:8080",
-
         model_name="is_high_quality_wine",
         model_alias="champion",
     ),
