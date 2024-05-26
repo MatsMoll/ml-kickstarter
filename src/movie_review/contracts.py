@@ -9,7 +9,7 @@ dataset_dir = FileSource.directory("data/sentiment")
 @feature_view(
     name="movie_review",
     description="Sentiment analysis of text data",
-    source=dataset_dir.csv_at("sentiment.csv")
+    source=dataset_dir.csv_at("sentiment.csv"),
 )
 class MovieReview:
     file = String().as_entity()
@@ -27,11 +27,10 @@ MovieReviewEmbedding = ollama_embedding_contract(
     model="nomic-embed-text",
     endpoint="http://host.docker.internal:11434",
     contract_name="movie_review_embedding",
-    contacts=["@MatsMoll"]
+    contacts=["@MatsMoll"],
 )
 
 review_embedding = MovieReviewEmbedding()
-
 
 
 @model_contract(
@@ -51,4 +50,3 @@ class MovieReviewIsNegative:
     file = String().as_entity()
     model_version = String().as_model_version()
     is_negative = review.is_negative.as_classification_label()
-

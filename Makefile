@@ -8,7 +8,7 @@ build:
 	docker compose build
 
 .PHONY: infra-up
-infra-up: 
+infra-up:
 	docker compose up aligned-catalog mlflow-tracker prefect-server pipeline-worker
 
 .PHONY: ollama
@@ -25,4 +25,3 @@ models-up:
 .PHONY: test
 test:
 	docker compose run test-action
-

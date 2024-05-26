@@ -23,7 +23,7 @@ class MLFlowServer(ExposedModel):
 
     timeout: int = field(default=30)
 
-    model_type: str = 'mlflow_server_custom'
+    model_type: str = "mlflow_server_custom"
 
     @property
     def exposed_at_url(self) -> str | None:
@@ -38,29 +38,31 @@ Assumes that it is the model: `{self.model_name}` with alias: `{self.model_alias
         from mlflow.tracking import MlflowClient
 
         mlflow_client = MlflowClient()
-        return mlflow_client.get_model_version_by_alias(self.model_name or model_name, self.model_alias)
+        return mlflow_client.get_model_version_by_alias(
+            self.model_name or model_name, self.model_alias
+        )
 
     def feature_refs(self) -> list[FeatureReference]:
         import json
-        info = mlflow.models.get_model_info(f"models:/{self.model_name}@{self.model_alias}")
+
+        info = mlflow.models.get_model_info(
+            f"models:/{self.model_name}@{self.model_alias}"
+        )
         signature = info.signature_dict
 
         if not signature:
             return []
 
         def from_string(string: str) -> FeatureReference:
-            splits = string.split(':')
+            splits = string.split(":")
             return FeatureReference(
                 name=splits[-1],
-                location=FeatureLocation.from_string(
-                    ":".join(splits[:-1])
-                ),
+                location=FeatureLocation.from_string(":".join(splits[:-1])),
                 dtype=FeatureType.string(),
             )
 
         return [
-            from_string(feature['name']) 
-            for feature in json.loads(signature['inputs'])
+            from_string(feature["name"]) for feature in json.loads(signature["inputs"])
         ]
 
     async def needed_features(self, store: ModelFeatureStore) -> list[FeatureReference]:
@@ -71,7 +73,9 @@ Assumes that it is the model: `{self.model_name}` with alias: `{self.model_alias
         req = store.store.requests_for_features(features)
         return req.request_result.entities
 
-    async def run_polars(self, values: RetrivalJob, store: ModelFeatureStore) -> pl.DataFrame:
+    async def run_polars(
+        self, values: RetrivalJob, store: ModelFeatureStore
+    ) -> pl.DataFrame:
         import polars as pl
         from httpx import AsyncClient
         from datetime import datetime, timezone
@@ -91,10 +95,11 @@ Assumes that it is the model: `{self.model_name}` with alias: `{self.model_alias
 
         async with AsyncClient(timeout=self.timeout) as client:
             response = await client.post(
-                f'{self.host}/invocations', json={'dataframe_records': df[features].to_dicts()}
+                f"{self.host}/invocations",
+                json={"dataframe_records": df[features].to_dicts()},
             )
             response.raise_for_status()
-            preds = response.json()['predictions']
+            preds = response.json()["predictions"]
 
         if pred_at:
             df = df.with_columns(

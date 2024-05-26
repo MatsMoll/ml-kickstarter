@@ -44,7 +44,7 @@ You are now ready to develop a new model.
 
 ### 2. Formulate the AI problem, and the expected AI output.
 
-E.g. if we want to predict if a review is either positive or negative, it could look something like the following: 
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
 
 ```python
 from aligned import String, Bool, model_contract
@@ -102,7 +102,7 @@ class WineIsHighQuality:
 
 ### 4. Create a training pipeline
 
-Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`. 
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
 
 Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
 
@@ -128,7 +128,7 @@ View the `wine-model` in `docker-compose.yaml` for an example.
 
 To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
 
-Make sure you have started the models with `make models-up`. 
+Make sure you have started the models with `make models-up`.
 This will reload the models when you promote a new model.
 
 Then we can predict over different datasets, or manually inputted data.
@@ -164,7 +164,7 @@ class MoviewReviewIsNegative:
 ### 9. Evaluate Online Predictions
 Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
 
-This can also be done through the aligned UI in the evaluation tab. 
+This can also be done through the aligned UI in the evaluation tab.
 Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
 
 ```python
@@ -189,7 +189,7 @@ Spins up the differnet trained MLFlow models.
 
 ### `make ollama`
 
-Spins up the Ollama server and pulls an embedding model down. 
+Spins up the Ollama server and pulls an embedding model down.
 If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
 
 ### `make test`

@@ -1,8 +1,18 @@
-from aligned import ContractStore, Directory, ContractStore
+from aligned import Directory, ContractStore
 from aligned.compiler.model import ConvertableToRetrivalJob
 from aligned.feature_store import ModelFeatureStore
 from aligned.retrival_job import RetrivalJob, SupervisedJob
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, RocCurveDisplay, ConfusionMatrixDisplay, DetCurveDisplay, PrecisionRecallDisplay
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    RocCurveDisplay,
+    ConfusionMatrixDisplay,
+    DetCurveDisplay,
+    PrecisionRecallDisplay,
+)
 from sklearn.model_selection import train_test_split
 from functools import partial
 from prefect.utilities.annotations import quote
@@ -11,13 +21,19 @@ from prefect import get_run_logger, task
 from prefect.runtime import flow_run
 from prefect.artifacts import create_link_artifact
 
-from src.model_registry import MlFlowModelRegristry, ModelRegristry, Model, unpack_embeddings
+from src.model_registry import (
+    MlFlowModelRegristry,
+    ModelRegristry,
+    Model,
+    unpack_embeddings,
+)
 from src.experiment_tracker import MlFlowExperimentTracker, ExperimentTracker
 
 
 @task
 async def load_store() -> ContractStore:
     return await ContractStore.from_dir(".")
+
 
 @task
 async def generate_train_test(
@@ -27,30 +43,26 @@ async def generate_train_test(
     dataset_id: str | None = None,
     train_size: float = 0.75,
 ) -> tuple[SupervisedJob, SupervisedJob]:
-
-    dataset = (model_store
-        .with_labels()
+    dataset = (
+        model_store.with_labels()
         .features_for(entities)
         .train_test(
             train_size=train_size,
             # Modify the classic `train_test_split` function to only take the dataframe as input
             splitter_factory=lambda config: partial(
-                train_test_split, 
-                train_size=config.left_size, # Left is train, right is test in this case
-                test_size=config.right_size, 
-                random_state=123
-            ) # type: ignore
+                train_test_split,
+                train_size=config.left_size,  # Left is train, right is test in this case
+                test_size=config.right_size,
+                random_state=123,
+            ),  # type: ignore
         )
     )
     if model_store.dataset_store and dataset_dir:
-
         if dataset_id is None:
             dataset_id = flow_run.get_name()
 
         dataset = await dataset.store_dataset_at_directory(
-            dataset_dir,
-            dataset_store=model_store.dataset_store,
-            id=dataset_id
+            dataset_dir, dataset_store=model_store.dataset_store, id=dataset_id
         )
 
     return dataset.train, dataset.test
@@ -63,39 +75,33 @@ async def generate_train_test_validate(
     dataset_dir: Directory | None,
     train_size: float = 0.6,
     test_size: float = 0.2,
-    dataset_id: str | None = None
-) -> tuple[
-    SupervisedJob,
-    SupervisedJob,
-    SupervisedJob
-]:
-    dataset = (model_store
-        .with_labels()
+    dataset_id: str | None = None,
+) -> tuple[SupervisedJob, SupervisedJob, SupervisedJob]:
+    dataset = (
+        model_store.with_labels()
         .features_for(entities)
         .train_test_validate(
             train_size=train_size,
             validate_size=1 - test_size - train_size,
             # Modify the classic `train_test_split` function to only take the dataframe as input
             splitter_factory=lambda config: partial(
-                train_test_split, 
-                train_size=config.left_size, 
-                test_size=config.right_size, 
-                random_state=123
-            ) # type: ignore
+                train_test_split,
+                train_size=config.left_size,
+                test_size=config.right_size,
+                random_state=123,
+            ),  # type: ignore
         )
     )
     if model_store.dataset_store and dataset_dir:
-
         if dataset_id is None:
             dataset_id = flow_run.get_name()
 
         dataset = await dataset.store_dataset_at_directory(
-            dataset_dir,
-            dataset_store=model_store.dataset_store,
-            id=dataset_id
+            dataset_dir, dataset_store=model_store.dataset_store, id=dataset_id
         )
 
     return dataset.train, dataset.test, dataset.validate
+
 
 @task
 async def find_best_parameters(
@@ -116,55 +122,55 @@ async def find_best_parameters(
     dataset = await data.to_polars()
 
     grid_search.fit(
-        unpack_embeddings(dataset.input, list(data.request_result.features)).to_pandas(),
-        dataset.labels.to_pandas()
+        unpack_embeddings(
+            dataset.input, list(data.request_result.features)
+        ).to_pandas(),
+        dataset.labels.to_pandas(),
     )
     return grid_search.best_params_
 
+
 @task
-async def fit_model(
-    model: Model, 
-    train_set: SupervisedJob
-) -> Model:
+async def fit_model(model: Model, train_set: SupervisedJob) -> Model:
     data = await train_set.to_polars()
     model.fit(
-        unpack_embeddings(data.input, list(train_set.request_result.features)), 
-        data.labels
+        unpack_embeddings(data.input, list(train_set.request_result.features)),
+        data.labels,
     )
     return model
 
+
 @task
 async def store_model(
-    model: Model,
-    model_contract: str,
-    store: ContractStore,
-    registry: ModelRegristry
+    model: Model, model_contract: str, store: ContractStore, registry: ModelRegristry
 ) -> str:
     return registry.store_model(model, model_contract, store)
+
 
 @task
 async def evaluate_model(
     model_id: str,
     datasets: list[tuple[str, SupervisedJob]],
     model_registry: ModelRegristry,
-    tracker: ExperimentTracker
+    tracker: ExperimentTracker,
 ) -> None:
-
     logger = get_run_logger()
     logger.info(f"Model ID: {model_id}")
 
     report_url = tracker.report_url()
     if report_url:
         _ = await create_link_artifact(
-            report_url, 
-            "Model Report", 
+            report_url,
+            "Model Report",
             description="Link to the model report containing evaluation metrics and figures.",
-            key=f"report-url",
+            key="report-url",
         )
 
     model = model_registry.load_model_with_id(model_id)
     if not model:
-        raise ValueError("Model not found in registry, something may be wrong with the storage.")
+        raise ValueError(
+            "Model not found in registry, something may be wrong with the storage."
+        )
 
     model_scorers = [
         ("accuracy", accuracy_score),
@@ -187,9 +193,7 @@ async def evaluate_model(
         data = await dataset.to_polars()
         tracker.log_metric(f"{dataset_name}_size", data.data.height)
 
-        unpacked = unpack_embeddings(
-            data.input, list(dataset.request_result.features)
-        )
+        unpacked = unpack_embeddings(data.input, list(dataset.request_result.features))
         preds = model.predict(unpacked)
 
         for scorer_name, scorer in model_scorers:
@@ -208,7 +212,6 @@ async def evaluate_model(
             tracker.log_figure(display, f"{dataset_name}_{figure_name}")
 
 
-
 async def classifier_from_train_test_set(
     store: ContractStore,
     model_contract: str,
@@ -221,9 +224,8 @@ async def classifier_from_train_test_set(
     model_contract_version: str | None = None,
     param_search: dict | None = None,
     registry: ModelRegristry | None = None,
-    tracker: ExperimentTracker | None = None
+    tracker: ExperimentTracker | None = None,
 ):
-
     if not registry:
         registry = MlFlowModelRegristry()
 
@@ -236,11 +238,11 @@ async def classifier_from_train_test_set(
         model_store = model_store.using_version(model_contract_version)
 
     train, test = await generate_train_test(
-        model_store, 
-        entities, 
-        dataset_dir=dataset_dir, 
+        model_store,
+        entities,
+        dataset_dir=dataset_dir,
         dataset_id=dataset_id,
-        train_size=train_size, 
+        train_size=train_size,
     )
 
     datasets = [
@@ -257,12 +259,4 @@ async def classifier_from_train_test_set(
         model = await fit_model(model, quote(train))
 
         model_id = await store_model(model, model_contract, store, registry)
-        await evaluate_model(
-            model_id, 
-            quote(datasets), 
-            registry,
-            tracker
-        )
-
-
-
+        await evaluate_model(model_id, quote(datasets), registry, tracker)

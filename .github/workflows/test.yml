@@ -11,7 +11,7 @@ permissions:
   contents: read # Needed to read the repo
   actions: read
   issues: write # Needed to write comments
-  pull-requests: write 
+  pull-requests: write
   id-token: write
 
 jobs:
@@ -135,6 +135,3 @@ jobs:
               repo: context.repo.repo,
               body: body
             })
-
-
-

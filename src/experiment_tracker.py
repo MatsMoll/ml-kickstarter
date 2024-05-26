@@ -5,7 +5,6 @@ from matplotlib.figure import Figure
 
 
 class ExperimentTracker(Protocol):
-
     @contextmanager
     def start_run(self, run_name: str):
         raise NotImplementedError(type(self))
@@ -23,9 +22,7 @@ class ExperimentTracker(Protocol):
         raise NotImplementedError(type(self))
 
 
-
 class MlFlowExperimentTracker(ExperimentTracker):
-
     @contextmanager
     def start_run(self, run_name: str):
         mlflow.set_experiment(run_name)
@@ -37,7 +34,7 @@ class MlFlowExperimentTracker(ExperimentTracker):
 
     def log_metric(self, key: str, value: float) -> None:
         mlflow.log_metric(key, value)
-        
+
     def log_figure(self, figure: Figure, name: str) -> None:
         if not name.endswith(".png"):
             name = name + ".png"
@@ -55,8 +52,8 @@ class MlFlowExperimentTracker(ExperimentTracker):
 
         return f"{url}/#/experiments/{experiment_id}/runs/{run_id}"
 
-class StdoutExperimentTracker(ExperimentTracker):
 
+class StdoutExperimentTracker(ExperimentTracker):
     @contextmanager
     def start_run(self, run_name: str):
         print(f"Starting run {run_name}")
@@ -74,4 +71,3 @@ class StdoutExperimentTracker(ExperimentTracker):
 
     def report_url(self) -> str | None:
         return None
-

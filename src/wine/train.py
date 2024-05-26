@@ -5,6 +5,7 @@ import numpy as np
 
 from src.pipelines.train import classifier_from_train_test_set, load_store
 
+
 @flow
 async def train_wine_model(
     search_params: dict[str, list] | None = None,
@@ -18,8 +19,7 @@ async def train_wine_model(
     # Train on all wines
     entities = store.feature_view("wine").select({"wine_id"}).all()
     model = RandomForestClassifier(
-        n_estimators=10, 
-        random_state=np.random.RandomState(123)
+        n_estimators=10, random_state=np.random.RandomState(123)
     )
     dataset_dir = FileSource.directory("data/wine/datasets")
     total_size = train_size + test_size + validate_size
@@ -30,9 +30,8 @@ async def train_wine_model(
         entities=entities,
         dataset_dir=dataset_dir,
         dataset_id=dataset_id,
-        model=model, # type: ignore
+        model=model,  # type: ignore
         param_search=search_params,
         train_size=train_size / total_size,
         test_size=test_size / total_size,
     )
-    
