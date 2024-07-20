@@ -60,7 +60,7 @@ class MovieReviewIsNegative:
 ```
 
 > [!NOTE]
-> Currently the setup assumes that all ML contracts and views are placed in a file called `contract.py`. However this can be changed by chainging the `loaded_contracts.py` file.
+> Currently the setup assumes that all ML contracts and views are placed in a file called `contract.py`. However this can be changed by chainging the `src/load_store.py` file.
 
 ### 3. Find relevant features.
 We can use the aligned UI to find which features that could be interesting for our ML use-case.
@@ -77,7 +77,7 @@ class MovieReview:
     is_negative = Bool()
 
 @model_contract(...)
-class MoviewReviewIsNegative:
+class MovieReviewIsNegative:
     review_id = String().as_entity()
     predicted_is_negative = (
         MovieReview().is_negative
