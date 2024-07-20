@@ -92,9 +92,6 @@ services:
       - ./data:/app/data
       - ./README.md:/app/README.md
       - ./src/load_store.py:/app/custom_store.py
-      - ./../aligned-managed-catalog/app.py:/app/app.py
-      - ./../aligned-managed-catalog/pages:/app/pages
-      - ./../aligned-managed-catalog/mermiad:/app/mermiad
     ports:
       - 9000:8501
     extra_hosts:
