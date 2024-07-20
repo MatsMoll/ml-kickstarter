@@ -17,6 +17,7 @@ services:
       - ./mlflow:/app/mlflow-server
     depends_on:
       - base-image
+    profiles: [infra]
 
   movie-review-is-negative:
     image: project-serve
@@ -31,10 +32,12 @@ services:
     volumes:
       - ./src:/app/src
       - ./serve_model_locally.py:/app/serve_model_locally.py
+      - ./model-settings:/app/model-settings
       # Adding mlflow to automatically update on model promption
       - ./mlflow/experiments/models:/app/mlflow/experiments/models
     depends_on:
       - base-image
+    profiles: [model]
 
   wine-model:
     image: project-serve
@@ -49,12 +52,32 @@ services:
     volumes:
       - ./src:/app/src
       - ./serve_model_locally.py:/app/serve_model_locally.py
+      - ./model-settings:/app/model-settings
       # Adding mlflow to automatically update on model promption
       - ./mlflow/experiments/models:/app/mlflow/experiments/models
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:
       - base-image
+    profiles: [model]
+
+  aligned-docs:
+    image: project-catalog
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.catalog
+    command: "python -m streamlit run src/kickstarter_docs/chat_app.py --server.port 8501 --server.fileWatcherType poll"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
+    volumes:
+      - ./src:/app/src
+      - ./streamlit_components:/app/streamlit_components
+      - ./data:/app/data
+    ports:
+      - 9001:8501
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    profiles: [infra]
 
   aligned-catalog:
     image: project-catalog
@@ -67,17 +90,25 @@ services:
     volumes:
       - ./src:/app/src
       - ./data:/app/data
-      - ./load_contracts.py:/app/custom_store.py
+      - ./README.md:/app/README.md
+      - ./src/load_store.py:/app/custom_store.py
+      - ./../aligned-managed-catalog/app.py:/app/app.py
+      - ./../aligned-managed-catalog/pages:/app/pages
+      - ./../aligned-managed-catalog/mermiad:/app/mermiad
     ports:
       - 9000:8501
     extra_hosts:
       - host.docker.internal:host-gateway
+    restart: on-failure
+    profiles: [infra]
 
   prefect-server:
-    image: prefecthq/prefect:2-python3.10
+    image: prefecthq/prefect:2.19.4-python3.10
     command: "prefect server start --port=4200 --host=0.0.0.0"
     ports:
       - 4201:4200
+    restart: on-failure
+    profiles: [infra]
 
   pipeline-worker:
     image: project-dev
@@ -95,6 +126,8 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - base-image
+    restart: on-failure
+    profiles: [infra]
 
   test:
     image: project-dev
@@ -108,6 +141,7 @@ services:
       - ./tests:/app/tests
     depends_on:
       - base-image
+    profiles: [test]
 
   #   # Uncomment below to expose Ollama API outside the container stack
   # ollama:

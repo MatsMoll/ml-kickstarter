@@ -1,5 +1,4 @@
 from prefect import flow, task
-from sklearn.ensemble import RandomForestClassifier
 from aligned import ContractStore, FileSource
 
 from src.pipelines.train import classifier_from_train_test_set, load_store
@@ -34,6 +33,8 @@ async def train_sentiment(
     test_size: float = 0.15,
     dataset_id: str | None = None,
 ):
+    from sklearn.ensemble import RandomForestClassifier
+
     store: ContractStore = await load_store()
 
     entities = await equal_distribution_entities(

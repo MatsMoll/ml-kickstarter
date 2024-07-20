@@ -1,8 +1,7 @@
 import pytest
 
-from aligned import ContractStore, FeatureLocation
+from aligned import FeatureLocation
 from aligned.data_source.batch_data_source import DummyDataSource
-from sklearn.ensemble import RandomForestClassifier
 
 from prefect import flow
 from prefect.testing.utilities import prefect_test_harness
@@ -10,10 +9,11 @@ from prefect.testing.utilities import prefect_test_harness
 from src.model_registry import InMemoryModelRegristry
 from src.experiment_tracker import StdoutExperimentTracker
 from src.pipelines.train import classifier_from_train_test_set
+from src.load_store import load_store
 
 
 async def setup_store():
-    store = await ContractStore.from_dir(".")
+    store = await load_store()
 
     for view in store.feature_views.keys():
         store.update_source_for(FeatureLocation.feature_view(view), DummyDataSource())
@@ -26,6 +26,7 @@ async def setup_store():
 
 @pytest.mark.asyncio
 async def test_generic_classifier_train_pipeline_using_prefect():
+    from sklearn.ensemble import RandomForestClassifier
     from src.movie_review.contracts import MovieReviewIsNegative
 
     store = await setup_store()

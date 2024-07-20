@@ -2,18 +2,6 @@ from aligned import Directory, ContractStore
 from aligned.compiler.model import ConvertableToRetrivalJob
 from aligned.feature_store import ModelFeatureStore
 from aligned.retrival_job import RetrivalJob, SupervisedJob
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
-    RocCurveDisplay,
-    ConfusionMatrixDisplay,
-    DetCurveDisplay,
-    PrecisionRecallDisplay,
-)
-from sklearn.model_selection import train_test_split
 from functools import partial
 from prefect.utilities.annotations import quote
 
@@ -32,7 +20,9 @@ from src.experiment_tracker import MlFlowExperimentTracker, ExperimentTracker
 
 @task
 async def load_store() -> ContractStore:
-    return await ContractStore.from_dir(".")
+    from src.load_store import load_store
+
+    return await load_store()
 
 
 @task
@@ -43,6 +33,8 @@ async def generate_train_test(
     dataset_id: str | None = None,
     train_size: float = 0.75,
 ) -> tuple[SupervisedJob, SupervisedJob]:
+    from sklearn.model_selection import train_test_split
+
     dataset = (
         model_store.with_labels()
         .features_for(entities)
@@ -77,6 +69,8 @@ async def generate_train_test_validate(
     test_size: float = 0.2,
     dataset_id: str | None = None,
 ) -> tuple[SupervisedJob, SupervisedJob, SupervisedJob]:
+    from sklearn.model_selection import train_test_split
+
     dataset = (
         model_store.with_labels()
         .features_for(entities)
@@ -154,6 +148,18 @@ async def evaluate_model(
     model_registry: ModelRegristry,
     tracker: ExperimentTracker,
 ) -> None:
+    from sklearn.metrics import (
+        accuracy_score,
+        precision_score,
+        recall_score,
+        f1_score,
+        roc_auc_score,
+        RocCurveDisplay,
+        ConfusionMatrixDisplay,
+        DetCurveDisplay,
+        PrecisionRecallDisplay,
+    )
+
     logger = get_run_logger()
     logger.info(f"Model ID: {model_id}")
 

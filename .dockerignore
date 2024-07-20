@@ -4,3 +4,8 @@ docker
 docker-compose.yaml
 .git
 tests
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class

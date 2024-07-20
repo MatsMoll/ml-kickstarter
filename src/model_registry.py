@@ -9,17 +9,13 @@ import numpy as np
 
 
 class Model(Protocol):
-    def fit(self, X: pl.DataFrame, y: pl.Series):
-        ...
+    def fit(self, X: pl.DataFrame, y: pl.Series): ...
 
-    def predict(self, X: pl.DataFrame):
-        ...
+    def predict(self, X: pl.DataFrame): ...
 
-    def get_params(self) -> dict:
-        ...
+    def get_params(self) -> dict: ...
 
-    def set_params(self, **kwargs) -> None:
-        ...
+    def set_params(self, **kwargs) -> None: ...
 
 
 def unpack_embeddings(input: pl.DataFrame, features: list[Feature]) -> pl.DataFrame:
@@ -160,14 +156,15 @@ def signature_for_model(
 
     all_features = []
     for request in input_reqs:
-        for feature in request.returned_features:
+        for feature in sorted(request.returned_features, key=lambda feat: feat.name):
             if feature.name not in input_req.features_to_include:
                 continue
 
             all_features.append(mlflow_spec(feature, request.location))
 
     return ModelSignature(
-        inputs=Schema(all_features), outputs=output_schema  # type: ignore
+        inputs=Schema(all_features),
+        outputs=output_schema,  # type: ignore
     )
 
 

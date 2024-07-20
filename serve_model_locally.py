@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import mlflow
 import click
 import subprocess
@@ -18,19 +19,25 @@ def start_mlfow_server(model_name: str, alias: str, port: int, host: str):
         print("Remember to start the tracking server, or train a model first.")
         raise e
 
+    mlserver_settings_dir = Path(f"model-settings/{model_name}")
+    mlserver_settings_dir.mkdir(exist_ok=True)
+
+    mlserver_config_path = mlserver_settings_dir / "model-settings.json"
+    mlserver_config_path.write_text(
+        data=json.dumps(
+            {
+                "name": model_name,
+                "implementation": "src.custom_mlflow_server.MLflowRuntime",
+                "parameters": {"uri": uri, "host": host, "http_port": port},
+            }
+        )
+    )
+
     subprocess.run(
         [
-            "mlflow",
-            "models",
-            "serve",
-            "-m",
-            uri,
-            "--port",
-            str(port),
-            "--host",
-            host,
-            "--no-conda",
-            "--enable-mlserver",
+            "mlserver",
+            "start",
+            mlserver_settings_dir.as_posix(),
         ]
     )
 

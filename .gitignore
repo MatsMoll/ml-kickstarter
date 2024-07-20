@@ -6,6 +6,10 @@ data/wine-quality/datasets.json
 data/sentiment/datasets.json
 data/movie_review_is_negative
 data/**/datasets/**/*
+data/lancedb
+data/doc-chunks.csv
+data/model_chunks.csv
+model-settings/**/*.json
 
 mlflow
 mlruns

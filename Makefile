@@ -1,15 +1,16 @@
 
-.PHONY: clean
-clean:
-	docker system prune -f
+
+.PHONY: infra-up
+infra-up:
+	docker compose --profile infra up
 
 .PHONY: build
 build:
 	docker compose build
 
-.PHONY: infra-up
-infra-up:
-	docker compose up aligned-catalog mlflow-tracker prefect-server pipeline-worker
+.PHONY: clean
+clean:
+	docker system prune -f
 
 .PHONY: ollama
 ollama:
@@ -20,7 +21,7 @@ ollama:
 
 .PHONY: models-up
 models-up:
-	docker compose up movie-review-is-negative wine-model
+	docker compose --profile model up
 
 .PHONY: test
 test:

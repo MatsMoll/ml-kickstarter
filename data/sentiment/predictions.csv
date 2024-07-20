@@ -1,4 +1,4 @@
-file,model_version,is_negative
+file,model_version,is_negative_pred
 train/neg/11176_1.txt,19,True
 train/neg/8133_1.txt,19,True
 train/neg/6900_1.txt,19,True

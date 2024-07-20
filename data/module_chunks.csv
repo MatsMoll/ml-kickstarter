@@ -1,0 +1,1308 @@
+content,id,lineno,loaded_at,name,source,source_type
+"Signature: input: schema of type 'Schema', prefix returns: list[MetadataTensor]",src.custom_mlflow_server.to_metadata_tensors,50,2024-07-20T10:54:43.222598UTC,to_metadata_tensors,src.custom_mlflow_server.to_metadata_tensors,function
+Signature: input: schema of type 'Schema' returns: Schema,src.custom_mlflow_server.aligned_schema,77,2024-07-20T10:54:43.222598UTC,aligned_schema,src.custom_mlflow_server.aligned_schema,function
+Signature: input: request of type 'Request' returns: str,src.custom_mlflow_server._get_raw_body,86,2024-07-20T10:54:43.222598UTC,_get_raw_body,src.custom_mlflow_server._get_raw_body,function
+Signature: input: spec of type 'ColSpec | TensorSpec' returns: FeatureReference,src.custom_mlflow_server.feature_reference_from_spec,91,2024-07-20T10:54:43.222598UTC,feature_reference_from_spec,src.custom_mlflow_server.feature_reference_from_spec,function
+"Subclassing: MLModel
+'\n    Implementation of the MLModel interface to load and serve `scikit-learn`\n    models persisted with `joblib`.\n    '
+Function: ping. Signature: input: self returns: str
+Function: health. Signature: input: self returns: str
+Function: mlflow_version. Signature: input: self returns: str
+Function: invocations. Signature: input: self, raw_body of type 'str', content_type of type 'str' returns: Response
+Function: load. Signature: input: self returns: bool
+Function: _sync_metadata. Signature: input: self returns: None
+Function: predict. Signature: input: self, payload of type 'InferenceRequest' returns: InferenceResponse",src.custom_mlflow_server.MLflowRuntime,108,2024-07-20T10:54:43.222598UTC,MLflowRuntime,src.custom_mlflow_server.MLflowRuntime,class
+"Subclassing: ExposedModel
+Decorated: dataclass
+'\n    Describes a model exposed through a mlflow server.\n\n    This also assumes that the model have a signature where each column is a feature reference.\n    Meaning on the format `(feature_view|model):<contract name>:<feature name>`.\n    '
+Function: exposed_at_url. Signature: input: self returns: str | None
+Function: as_markdown. Signature: input: self returns: str
+Function: get_model_version. Signature: input: self, model_name of type 'str'
+Function: feature_refs. Signature: input: self returns: list[FeatureReference]
+Function: needed_features. Signature: input: self, store of type 'ModelFeatureStore' returns: list[FeatureReference]
+Function: needed_entities. Signature: input: self, store of type 'ModelFeatureStore' returns: set[Feature]
+Function: run_polars. Signature: input: self, values of type 'RetrivalJob', store of type 'ModelFeatureStore' returns: pl.DataFrame",src.mlflow_model.MLFlowServer,11,2024-07-20T10:54:43.222598UTC,MLFlowServer,src.mlflow_model.MLFlowServer,class
+"Signature:  returns: ContractStore
+'\n    Loads the contract store.\n    This is needed for the cata catalog, as it is looking for this spesific function.\n    Therefore, it will break if this is renamed.\n\n    You can also manually spesify all the views, and models if that is prefered.\n    '",src.load_store.custom_store,5,2024-07-20T10:54:43.222598UTC,custom_store,src.load_store.custom_store,function
+Signature:  returns: ContractStore,src.load_store.load_store,18,2024-07-20T10:54:43.222598UTC,load_store,src.load_store.load_store,function
+"Subclassing: Protocol
+Function: start_run. Signature: input: self, run_name of type 'str'
+Function: log_model_params. Signature: input: self, params of type 'dict' returns: None
+Function: log_metric. Signature: input: self, key of type 'str', value of type 'float' returns: None
+Function: log_figure. Signature: input: self, figure of type 'Figure', name of type 'str' returns: None
+Function: report_url. Signature: input: self returns: str | None",src.experiment_tracker.ExperimentTracker,7,2024-07-20T10:54:43.222598UTC,ExperimentTracker,src.experiment_tracker.ExperimentTracker,class
+"Subclassing: ExperimentTracker
+Function: start_run. Signature: input: self, run_name of type 'str'
+Function: log_model_params. Signature: input: self, params of type 'dict' returns: None
+Function: log_metric. Signature: input: self, key of type 'str', value of type 'float' returns: None
+Function: log_figure. Signature: input: self, figure of type 'Figure', name of type 'str' returns: None
+Function: report_url. Signature: input: self returns: str | None",src.experiment_tracker.MlFlowExperimentTracker,25,2024-07-20T10:54:43.222598UTC,MlFlowExperimentTracker,src.experiment_tracker.MlFlowExperimentTracker,class
+"Subclassing: ExperimentTracker
+Function: start_run. Signature: input: self, run_name of type 'str'
+Function: log_model_params. Signature: input: self, params of type 'dict'
+Function: log_metric. Signature: input: self, key of type 'str', value of type 'float'
+Function: log_figure. Signature: input: self, figure of type 'Figure', name of type 'str' returns: None
+Function: report_url. Signature: input: self returns: str | None",src.experiment_tracker.StdoutExperimentTracker,56,2024-07-20T10:54:43.222598UTC,StdoutExperimentTracker,src.experiment_tracker.StdoutExperimentTracker,class
+"Subclassing: Protocol
+Function: fit. Signature: input: self, X of type 'pl.DataFrame', y of type 'pl.Series'
+Function: predict. Signature: input: self, X of type 'pl.DataFrame'
+Function: get_params. Signature: input: self returns: dict
+Function: set_params. Signature: input: self returns: None",src.model_registry.Model,11,2024-07-20T10:54:43.222598UTC,Model,src.model_registry.Model,class
+"Signature: input: input of type 'pl.DataFrame', features of type 'list[Feature]' returns: pl.DataFrame
+'\n    Unpacks all embedding features in the input DataFrame.\n\n    This is needed as most models do not accept nested data structures.\n    Therefore, this will transform the input to one 1D vector.\n    '",src.model_registry.unpack_embeddings,21,2024-07-20T10:54:43.222598UTC,unpack_embeddings,src.model_registry.unpack_embeddings,function
+"Signature: input: input of type 'pl.DataFrame' returns: pl.DataFrame
+'\n    Unpacks all list features in the input DataFrame.\n\n    This is needed as most models do not accept nested data structures.\n    Therefore, this will transform the input to one 1D vector.\n    '",src.model_registry.unpack_lists,44,2024-07-20T10:54:43.222598UTC,unpack_lists,src.model_registry.unpack_lists,function
+"Subclassing: Protocol
+Function: store_model. Signature: input: self, model of type 'Model', model_name of type 'str', store of type 'FeatureStore' returns: str
+Function: load_model_with_id. Signature: input: self, id of type 'str' returns: Model | None
+Function: load_model. Signature: input: self, name of type 'str' returns: Model | None",src.model_registry.ModelRegristry,72,2024-07-20T10:54:43.222598UTC,ModelRegristry,src.model_registry.ModelRegristry,class
+"Subclassing: ModelRegristry
+Function: __init__. Signature: input: self, models of type 'dict[str, Model] | None'
+Function: store_model. Signature: input: self, model of type 'Model', model_name of type 'str', store of type 'FeatureStore' returns: str
+Function: load_model_with_id. Signature: input: self, id of type 'str' returns: Model | None
+Function: load_model. Signature: input: self, name of type 'str' returns: Model | None",src.model_registry.InMemoryModelRegristry,83,2024-07-20T10:54:43.222598UTC,InMemoryModelRegristry,src.model_registry.InMemoryModelRegristry,class
+"Signature: input: model_contract_name of type 'str', store of type 'FeatureStore' returns: ModelSignature",src.model_registry.signature_for_model,107,2024-07-20T10:54:43.222598UTC,signature_for_model,src.model_registry.signature_for_model,function
+"Subclassing: ModelRegristry
+Function: store_model. Signature: input: self, model of type 'Model', model_name of type 'str', store of type 'FeatureStore' returns: str
+Function: load_model_with_id. Signature: input: self, id of type 'str' returns: Model | None
+Function: load_model. Signature: input: self, name of type 'str', alias of type 'str' returns: Model | None",src.model_registry.MlFlowModelRegristry,171,2024-07-20T10:54:43.222598UTC,MlFlowModelRegristry,src.model_registry.MlFlowModelRegristry,class
+Decorated: dataclass,src.kickstarter_docs.chat_app.ChatMessage,20,2024-07-20T10:54:43.222598UTC,ChatMessage,src.kickstarter_docs.chat_app.ChatMessage,class
+"Subclassing: Protocol
+Function: read. Signature: input: self returns: list[ChatMessage]
+Function: add. Signature: input: self, message of type 'ChatMessage' returns: None",src.kickstarter_docs.chat_app.ChatStore,25,2024-07-20T10:54:43.222598UTC,ChatStore,src.kickstarter_docs.chat_app.ChatStore,class
+"Subclassing: ChatStore
+Function: read. Signature: input: self returns: list[ChatMessage]
+Function: add. Signature: input: self, message of type 'ChatMessage' returns: None",src.kickstarter_docs.chat_app.StreamlitChatStore,31,2024-07-20T10:54:43.222598UTC,StreamlitChatStore,src.kickstarter_docs.chat_app.StreamlitChatStore,class
+"Signature: input: col of type 'DeltaGenerator', model_contract of type 'ModelFeatureStore' returns: None",src.kickstarter_docs.chat_app.sidebar,45,2024-07-20T10:54:43.222598UTC,sidebar,src.kickstarter_docs.chat_app.sidebar,function
+Signature: input: chat_store of type 'ChatStore',src.kickstarter_docs.chat_app.run,80,2024-07-20T10:54:43.222598UTC,run,src.kickstarter_docs.chat_app.run,function
+"Signature: input: contract of type 'ModelFeatureStore', prompt of type 'str' returns: ChatMessage",src.kickstarter_docs.chat_app.display_response,112,2024-07-20T10:54:43.222598UTC,display_response,src.kickstarter_docs.chat_app.display_response,function
+"Signature: input: stm of type 'ast.stmt', hir of type 'list[str]' returns: list[dict]",src.kickstarter_docs.contract.chunks_from,23,2024-07-20T10:54:43.222598UTC,chunks_from,src.kickstarter_docs.contract.chunks_from,function
+"Signature: input: file of type 'str', hir of type 'list[str]' returns: list[dict]
+""\n    Parsing a file into different components based on it's format.\n    """,src.kickstarter_docs.contract.parse_md_file,110,2024-07-20T10:54:43.222598UTC,parse_md_file,src.kickstarter_docs.contract.parse_md_file,function
+Signature: input: request returns: pl.LazyFrame,src.kickstarter_docs.contract.parse_code_chunks,158,2024-07-20T10:54:43.222598UTC,parse_code_chunks,src.kickstarter_docs.contract.parse_code_chunks,function
+"Decorated: feature_view(name='module_chunks', source=CustomMethodDataSource.from_load(parse_code_chunks).with_loaded_at(), materialized_source=FileSource.csv_at('data/module_chunks.csv'), acceptable_freshness=timedelta(minutes=15), unacceptable_freshness=timedelta(days=1))
+Attribute: id
+Attribute: source
+Attribute: lineno
+Attribute: name
+Attribute: source_type
+Attribute: content
+Attribute: loaded_at",src.kickstarter_docs.contract.ModuleChunk,185,2024-07-20T10:54:43.222598UTC,ModuleChunk,src.kickstarter_docs.contract.ModuleChunk,class
+Signature: ,src.kickstarter_docs.contract.rag_chain,223,2024-07-20T10:54:43.222598UTC,rag_chain,src.kickstarter_docs.contract.rag_chain,function
+"Decorated: feature_view(name='kickstarter-docs-question', source=DummyDataSource())
+Attribute: query
+Attribute: question_id",src.kickstarter_docs.contract.KickstarterQAInputFormat,241,2024-07-20T10:54:43.222598UTC,KickstarterQAInputFormat,src.kickstarter_docs.contract.KickstarterQAInputFormat,class
+"Decorated: model_contract(name='kickstarter-docs-questions', input_features=[question.query], exposed_model=LangChain.from_chain(rag_chain(), chain_output='result', output_key='content', depends_on=[KickstarterDocsEmbedding]))
+Attribute: content
+Attribute: responeded_at",src.kickstarter_docs.contract.KickstarterDocsQuestionAnswer,259,2024-07-20T10:54:43.222598UTC,KickstarterDocsQuestionAnswer,src.kickstarter_docs.contract.KickstarterDocsQuestionAnswer,class
+Signature:  returns: list[RunnerDeployment],src.pipelines.available.all_pipelines,12,2024-07-20T10:54:43.222598UTC,all_pipelines,src.pipelines.available.all_pipelines,function
+Signature: ,src.pipelines.available.listen_to_work,28,2024-07-20T10:54:43.222598UTC,listen_to_work,src.pipelines.available.listen_to_work,function
+Signature: ,src.pipelines.available.main,32,2024-07-20T10:54:43.222598UTC,main,src.pipelines.available.main,function
+"Signature:  returns: ContractStore
+Decorated: task",src.pipelines.materialize.load_store,10,2024-07-20T10:54:43.222598UTC,load_store,src.pipelines.materialize.load_store,function
+"Signature: input: view_name of type 'str', store of type 'ContractStore' returns: None
+Decorated: task",src.pipelines.materialize.materialize_view,16,2024-07-20T10:54:43.222598UTC,materialize_view,src.pipelines.materialize.materialize_view,function
+"Signature: input: store of type 'ContractStore' returns: dict[FeatureLocation, int]",src.pipelines.materialize.levels_for_store,58,2024-07-20T10:54:43.222598UTC,levels_for_store,src.pipelines.materialize.levels_for_store,function
+"Signature: input: location of type 'FeatureLocation', store of type 'ContractStore' returns: set[FeatureLocation]",src.pipelines.materialize.location_depends_on,80,2024-07-20T10:54:43.222598UTC,location_depends_on,src.pipelines.materialize.location_depends_on,function
+"Signature: input: location of type 'FeatureLocation', store of type 'ContractStore', existing_locations of type 'dict[FeatureLocation, int] | None' returns: dict[FeatureLocation, int]",src.pipelines.materialize.levels_for_location,93,2024-07-20T10:54:43.222598UTC,levels_for_location,src.pipelines.materialize.levels_for_location,function
+"Signature: input: locations of type 'list[FeatureLocation]', store of type 'ContractStore' returns: list[FeatureLocation]",src.pipelines.materialize.locations_with_freshness_threshold,121,2024-07-20T10:54:43.222598UTC,locations_with_freshness_threshold,src.pipelines.materialize.locations_with_freshness_threshold,function
+"Signature: input: locations of type 'list[FeatureLocation]', store of type 'ContractStore' returns: dict[FeatureLocation, set[FeatureLocation]]",src.pipelines.materialize.depends_on_map,136,2024-07-20T10:54:43.222598UTC,depends_on_map,src.pipelines.materialize.depends_on_map,function
+"Signature: input: levels of type 'dict[FeatureLocation, int]' returns: list[list[FeatureLocation]]",src.pipelines.materialize.update_order,146,2024-07-20T10:54:43.222598UTC,update_order,src.pipelines.materialize.update_order,function
+"Signature: input: location of type 'str | None'
+Decorated: flow
+'\n    Updates all data that is out of data based on the `accepted_freshness` threshold.\n\n    If no location is passed in will all views be checked.\n    However, you can also pass in a view to only update for a subset.\n    E.g: `feature_view:wine` or `model:movie_review_is_negative`\n    '",src.pipelines.materialize.update_out_of_date_data,168,2024-07-20T10:54:43.222598UTC,update_out_of_date_data,src.pipelines.materialize.update_out_of_date_data,function
+"Signature:  returns: ContractStore
+Decorated: task",src.pipelines.train.load_store,22,2024-07-20T10:54:43.222598UTC,load_store,src.pipelines.train.load_store,function
+"Signature: input: model_store of type 'ModelFeatureStore', entities of type 'ConvertableToRetrivalJob | RetrivalJob', dataset_dir of type 'Directory', dataset_id of type 'str | None', train_size of type 'float' returns: tuple[SupervisedJob, SupervisedJob]
+Decorated: task",src.pipelines.train.generate_train_test,28,2024-07-20T10:54:43.222598UTC,generate_train_test,src.pipelines.train.generate_train_test,function
+"Signature: input: model_store of type 'ModelFeatureStore', entities of type 'ConvertableToRetrivalJob | RetrivalJob', dataset_dir of type 'Directory | None', train_size of type 'float', test_size of type 'float', dataset_id of type 'str | None' returns: tuple[SupervisedJob, SupervisedJob, SupervisedJob]
+Decorated: task",src.pipelines.train.generate_train_test_validate,63,2024-07-20T10:54:43.222598UTC,generate_train_test_validate,src.pipelines.train.generate_train_test_validate,function
+"Signature: input: model of type 'Model', data of type 'SupervisedJob', params of type 'dict' returns: dict
+Decorated: task",src.pipelines.train.find_best_parameters,100,2024-07-20T10:54:43.222598UTC,find_best_parameters,src.pipelines.train.find_best_parameters,function
+"Signature: input: model of type 'Model', train_set of type 'SupervisedJob' returns: Model
+Decorated: task",src.pipelines.train.fit_model,127,2024-07-20T10:54:43.222598UTC,fit_model,src.pipelines.train.fit_model,function
+"Signature: input: model of type 'Model', model_contract of type 'str', store of type 'ContractStore', registry of type 'ModelRegristry' returns: str
+Decorated: task",src.pipelines.train.store_model,137,2024-07-20T10:54:43.222598UTC,store_model,src.pipelines.train.store_model,function
+"Signature: input: model_id of type 'str', datasets of type 'list[tuple[str, SupervisedJob]]', model_registry of type 'ModelRegristry', tracker of type 'ExperimentTracker' returns: None
+Decorated: task",src.pipelines.train.evaluate_model,144,2024-07-20T10:54:43.222598UTC,evaluate_model,src.pipelines.train.evaluate_model,function
+"Signature: input: store of type 'ContractStore', model_contract of type 'str', entities of type 'ConvertableToRetrivalJob | RetrivalJob', model of type 'Model', dataset_dir of type 'Directory | None', dataset_id of type 'str | None', train_size of type 'float', test_size of type 'float', model_contract_version of type 'str | None', param_search of type 'dict | None', registry of type 'ModelRegristry | None', tracker of type 'ExperimentTracker | None'",src.pipelines.train.classifier_from_train_test_set,220,2024-07-20T10:54:43.222598UTC,classifier_from_train_test_set,src.pipelines.train.classifier_from_train_test_set,function
+"Signature:  returns: ContractStore
+Decorated: task",src.pipelines.batch_predict.load_store,9,2024-07-20T10:54:43.222598UTC,load_store,src.pipelines.batch_predict.load_store,function
+"Signature: input: model_name of type 'str', store of type 'ContractStore' returns: None
+Decorated: task",src.pipelines.batch_predict.batch_predict_for,15,2024-07-20T10:54:43.222598UTC,batch_predict_for,src.pipelines.batch_predict.batch_predict_for,function
+"Signature: input: store of type 'ContractStore', update_tag of type 'str | None' returns: list[Model]
+Decorated: task",src.pipelines.batch_predict.select_models_to_predict_for,95,2024-07-20T10:54:43.222598UTC,select_models_to_predict_for,src.pipelines.batch_predict.select_models_to_predict_for,function
+"Signature: input: update_tag of type 'str | None'
+Decorated: flow",src.pipelines.batch_predict.batch_predict,132,2024-07-20T10:54:43.222598UTC,batch_predict,src.pipelines.batch_predict.batch_predict,function
+"Signature: input: search_params of type 'dict[str, list] | None', train_size of type 'float', test_size of type 'float', validate_size of type 'float', dataset_id of type 'str | None'
+Decorated: flow",src.wine.train.train_wine_model,9,2024-07-20T10:54:43.222598UTC,train_wine_model,src.wine.train.train_wine_model,function
+Signature: input: df of type 'pl.LazyFrame' returns: pl.LazyFrame,src.wine.contracts.add_hash_column,37,2024-07-20T10:54:43.222598UTC,add_hash_column,src.wine.contracts.add_hash_column,function
+"Decorated: feature_view(name='white_wine', source=dataset_dir.csv_at('white.csv', csv_config=csv_config, mapping_keys=mapping_keys).transform_with_polars(add_hash_column).with_loaded_at(), materialized_source=dataset_dir.csv_at('white_with_id.csv', csv_config=csv_config, mapping_keys=mapping_keys), acceptable_freshness=timedelta(days=30))
+'\n    Data from the classic [Wine Quality dataset](https://archive.ics.uci.edu/dataset/186/wine+quality)\n    '
+Attribute: wine_id
+Attribute: loaded_at
+Attribute: fixed_acidity
+Attribute: volatile_acidity
+Attribute: citric_acid
+Attribute: residual_sugar
+Attribute: chlorides
+Attribute: free_sulfur_dioxide
+Attribute: total_sulfur_dioxide
+Attribute: density
+Attribute: pH
+Attribute: sulphates
+Attribute: alcohol
+Attribute: quality",src.wine.contracts.WhiteWine,54,2024-07-20T10:54:43.222598UTC,WhiteWine,src.wine.contracts.WhiteWine,class
+"Decorated: feature_view(name='wine', source=WhiteWine.vstack(RedWine, source_column='origin_view'), acceptable_freshness=timedelta(days=30))
+'\n    Data from the classic [Wine Quality dataset](https://archive.ics.uci.edu/dataset/186/wine+quality)\n    '
+Attribute: wine_id
+Attribute: loaded_at
+Attribute: fixed_acidity
+Attribute: volatile_acidity
+Attribute: citric_acid
+Attribute: residual_sugar
+Attribute: chlorides
+Attribute: free_sulfur_dioxide
+Attribute: total_sulfur_dioxide
+Attribute: density
+Attribute: pH
+Attribute: sulphates
+Attribute: alcohol
+Attribute: quality
+Attribute: origin_view
+Attribute: is_red_wine
+Attribute: is_high_quality",src.wine.contracts.Wine,96,2024-07-20T10:54:43.222598UTC,Wine,src.wine.contracts.Wine,class
+"Decorated: model_contract(name='is_high_quality_wine', input_features=[wine.fixed_acidity, wine.volatile_acidity, wine.citric_acid, wine.residual_sugar, wine.chlorides, wine.free_sulfur_dioxide, wine.total_sulfur_dioxide, wine.density, wine.pH, wine.sulphates, wine.alcohol, wine.is_red_wine], exposed_model=mlflow_server(host='http://wine-model:8080', model_name='is_high_quality_wine', model_alias='champion'), output_source=dataset_dir.csv_at('predictions.csv'), dataset_store=dataset_dir.json_at('datasets.json'), contacts=['@MatsMoll'], acceptable_freshness=timedelta(days=30))
+Attribute: wine_id
+Attribute: predicted_at
+Attribute: predicted_quality",src.wine.contracts.WineModel,155,2024-07-20T10:54:43.222598UTC,WineModel,src.wine.contracts.WineModel,class
+"Signature: input: number_of_records of type 'int', store of type 'ContractStore' returns: pl.DataFrame
+Decorated: task",src.movie_review.train.equal_distribution_entities,11,2024-07-20T10:54:43.222598UTC,equal_distribution_entities,src.movie_review.train.equal_distribution_entities,function
+"Signature: input: number_of_records of type 'int', search_params of type 'dict | None', train_size of type 'float', test_size of type 'float', dataset_id of type 'str | None'
+Decorated: flow(name='train_movie_review_is_negative_with_train_test_validate')",src.movie_review.train.train_sentiment,29,2024-07-20T10:54:43.222598UTC,train_sentiment,src.movie_review.train.train_sentiment,function
+"Decorated: feature_view(name='movie_review', description='Sentiment analysis of text data', source=dataset_dir.csv_at('sentiment.csv'))
+Attribute: review_id
+Attribute: text
+Attribute: is_negative",src.movie_review.contracts.MovieReview,13,2024-07-20T10:54:43.222598UTC,MovieReview,src.movie_review.contracts.MovieReview,class
+"Decorated: model_contract(name='movie_review_is_negative', input_features=[review_embedding.embedding], output_source=dataset_dir.csv_at('predictions.csv'), exposed_model=mlflow_server(host='http://movie-review-is-negative:8080', model_name='movie_review_is_negative', model_alias='champion'), dataset_store=dataset_dir.json_at('datasets.json'))
+Attribute: review_id
+Attribute: model_version
+Attribute: is_negative_pred",src.movie_review.contracts.MovieReviewIsNegative,46,2024-07-20T10:54:43.222598UTC,MovieReviewIsNegative,src.movie_review.contracts.MovieReviewIsNegative,class
+"
+This is a kickstarter project for an end-to-end ML.
+
+The goal of this project was to create the project structure that I would love to use my self.
+Therefore, it is optimized for **local development** meaning faster iteration speed.
+
+Furthermore, to make projects reliable, reproducable and easy to deploy will everything be developed through **Docker**, but with **hot reloading**. Meaning less build time and as a result faster iteration speeds.
+
+## AI / ML Capabilities
+- LLM / embedding server using Ollama
+- Model experiment tracking using MLFLow
+- Model regristry using MLFLow
+- Model serving using MLFlow
+- Model evaluation in production using Aligned
+- Job orchestration using Prefect
+- Data catalog using Aligned
+- Data management using Aligned
+- Data quality management using Aligned
+- Data annotation using Aligned
+
+## Software Development Capabilities
+- Complete local development
+- Containerized development for easier deployment
+- Hot reload updatest to orchestation pipelines
+- Hot reload model serving on promotion
+- CI with unit and integration test on PRs
+- CI warning for potential drift detection
+
+## Intended Development Flow
+
+When starting a new AI project, here is the intended development flow.
+
+### 1. Spin up the infra
+First we need to start the needed infrastructure to experiment and run our projects.
+
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+
+### 2. Formulate the AI problem, and the expected AI output.
+
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
+
+```python
+from aligned import String, Bool, model_contract
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[] # Unclear for now
+)
+class MovieReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String()
+    predicted_is_negative = Bool()
+```
+
+
+### 3. Find relevant features.
+We can use the aligned UI to find which features that could be interesting for our ML use-case.
+
+![Find features in Aligned UI](assets/find-features.png)
+
+This assumes that you have told aligned which data to use as the ground truth, which can be done with `.as_classification_label()`.
+
+```python
+@feature_view(...)
+class MovieReview:
+    review_id = String().as_entity()
+    review = String()
+    is_negative = Bool()
+
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+We can now add the intended features into the contract, but listing them, or the full feature view in the `input_feature` attribute. And it is also possible to have differnet versions of input, incase the input changes over time.
+
+```python
+wine_features = Wine()
+
+@model_contract(
+    name=""wine_is_high_quality"",
+    input_features=[
+        wine_features.is_red_wine,
+        wine_features.alcohol,
+        ...
+    ]
+)
+class WineIsHighQuality:
+    ...
+```
+
+### 4. Create a training pipeline
+
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
+
+Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
+
+### 5. Train the model
+
+Train the model by using the Prefect UI.
+
+![Prefect UI training run](assets/prefect-train-model.png)
+
+### 6. Manage the Models
+
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+
+### 7. Spin up a serving end-point
+
+Figure out what the url of the model is and serve the ML model.
+
+View the `wine-model` in `docker-compose.yaml` for an example.
+
+### 8. Use the model
+
+To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`.
+This will reload the models when you promote a new model.
+
+Then we can predict over different datasets, or manually inputted data.
+
+![Predict over data](assets/predict-over-data.png)
+
+```python
+from aligned import FileSource, ...
+from aligned.exposed_model.mlflow import mlflow_server
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[...],
+    exposed_at=mlflow_server(
+        host=""http://my-docker-service-name:8080"",
+
+        # Used to figure out which model version produced the prediction
+        model_name=""movie_review_is_negative"",
+        model_alias=""champion""
+    ),
+    output_source=FileSource.csv_at(""online_preds/movie_review_is_negative.csv""),
+    dataset_store=FileSource.json_at(""datasets/movie_review_is_negative.json"")
+)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+### 9. Evaluate Online Predictions
+Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
+
+This can also be done through the aligned UI in the evaluation tab.
+Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
+
+```python
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
+```
+
+![Evaluate Models](assets/evaluate-model.png)
+
+## Other make commands
+
+This projects contain a simple `Makefile` to simplify the development.
+
+### `make models-up`
+Spins up the differnet trained MLFlow models.
+
+- Spins up the `wine_model` if trained and annotated as `champion` - can be done through `make train`
+- Spins up the `movie_review_is_negative` if trained and annotated as `champion` - can be done through `make train`
+
+### `make ollama`
+
+Spins up the Ollama server and pulls an embedding model down.
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
+
+### `make test`
+Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
+
+### `make build`
+Rebuilds all images if needed.
+
+### `make clean`
+Removes all unused docker images.
+",README.md,0,2024-07-20T10:54:43.222598UTC,# ML Kickstarter,README.md/# ML Kickstarter,docs
+"This is a kickstarter project for an end-to-end ML.
+
+The goal of this project was to create the project structure that I would love to use my self.
+Therefore, it is optimized for **local development** meaning faster iteration speed.
+
+Furthermore, to make projects reliable, reproducable and easy to deploy will everything be developed through **Docker**, but with **hot reloading**. Meaning less build time and as a result faster iteration speeds.
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,,README.md/# ML Kickstarter/,docs
+"- LLM / embedding server using Ollama
+- Model experiment tracking using MLFLow
+- Model regristry using MLFLow
+- Model serving using MLFlow
+- Model evaluation in production using Aligned
+- Job orchestration using Prefect
+- Data catalog using Aligned
+- Data management using Aligned
+- Data quality management using Aligned
+- Data annotation using Aligned
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,AI / ML Capabilities,README.md/# ML Kickstarter/AI / ML Capabilities,docs
+"- Complete local development
+- Containerized development for easier deployment
+- Hot reload updatest to orchestation pipelines
+- Hot reload model serving on promotion
+- CI with unit and integration test on PRs
+- CI warning for potential drift detection
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,Software Development Capabilities,README.md/# ML Kickstarter/Software Development Capabilities,docs
+"
+When starting a new AI project, here is the intended development flow.
+
+### 1. Spin up the infra
+First we need to start the needed infrastructure to experiment and run our projects.
+
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+
+### 2. Formulate the AI problem, and the expected AI output.
+
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
+
+```python
+from aligned import String, Bool, model_contract
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[] # Unclear for now
+)
+class MovieReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String()
+    predicted_is_negative = Bool()
+```
+
+
+### 3. Find relevant features.
+We can use the aligned UI to find which features that could be interesting for our ML use-case.
+
+![Find features in Aligned UI](assets/find-features.png)
+
+This assumes that you have told aligned which data to use as the ground truth, which can be done with `.as_classification_label()`.
+
+```python
+@feature_view(...)
+class MovieReview:
+    review_id = String().as_entity()
+    review = String()
+    is_negative = Bool()
+
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+We can now add the intended features into the contract, but listing them, or the full feature view in the `input_feature` attribute. And it is also possible to have differnet versions of input, incase the input changes over time.
+
+```python
+wine_features = Wine()
+
+@model_contract(
+    name=""wine_is_high_quality"",
+    input_features=[
+        wine_features.is_red_wine,
+        wine_features.alcohol,
+        ...
+    ]
+)
+class WineIsHighQuality:
+    ...
+```
+
+### 4. Create a training pipeline
+
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
+
+Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
+
+### 5. Train the model
+
+Train the model by using the Prefect UI.
+
+![Prefect UI training run](assets/prefect-train-model.png)
+
+### 6. Manage the Models
+
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+
+### 7. Spin up a serving end-point
+
+Figure out what the url of the model is and serve the ML model.
+
+View the `wine-model` in `docker-compose.yaml` for an example.
+
+### 8. Use the model
+
+To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`.
+This will reload the models when you promote a new model.
+
+Then we can predict over different datasets, or manually inputted data.
+
+![Predict over data](assets/predict-over-data.png)
+
+```python
+from aligned import FileSource, ...
+from aligned.exposed_model.mlflow import mlflow_server
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[...],
+    exposed_at=mlflow_server(
+        host=""http://my-docker-service-name:8080"",
+
+        # Used to figure out which model version produced the prediction
+        model_name=""movie_review_is_negative"",
+        model_alias=""champion""
+    ),
+    output_source=FileSource.csv_at(""online_preds/movie_review_is_negative.csv""),
+    dataset_store=FileSource.json_at(""datasets/movie_review_is_negative.json"")
+)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+### 9. Evaluate Online Predictions
+Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
+
+This can also be done through the aligned UI in the evaluation tab.
+Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
+
+```python
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
+```
+
+![Evaluate Models](assets/evaluate-model.png)
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,Intended Development Flow,README.md/# ML Kickstarter/Intended Development Flow,docs
+"When starting a new AI project, here is the intended development flow.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,,README.md/# ML Kickstarter/Intended Development Flow/,docs
+"First we need to start the needed infrastructure to experiment and run our projects.
+
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,1. Spin up the infra,README.md/# ML Kickstarter/Intended Development Flow/1. Spin up the infra,docs
+"
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
+
+```python
+from aligned import String, Bool, model_contract
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[] # Unclear for now
+)
+class MovieReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String()
+    predicted_is_negative = Bool()
+```
+
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,"2. Formulate the AI problem, and the expected AI output.","README.md/# ML Kickstarter/Intended Development Flow/2. Formulate the AI problem, and the expected AI output.",docs
+"We can use the aligned UI to find which features that could be interesting for our ML use-case.
+
+![Find features in Aligned UI](assets/find-features.png)
+
+This assumes that you have told aligned which data to use as the ground truth, which can be done with `.as_classification_label()`.
+
+```python
+@feature_view(...)
+class MovieReview:
+    review_id = String().as_entity()
+    review = String()
+    is_negative = Bool()
+
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+We can now add the intended features into the contract, but listing them, or the full feature view in the `input_feature` attribute. And it is also possible to have differnet versions of input, incase the input changes over time.
+
+```python
+wine_features = Wine()
+
+@model_contract(
+    name=""wine_is_high_quality"",
+    input_features=[
+        wine_features.is_red_wine,
+        wine_features.alcohol,
+        ...
+    ]
+)
+class WineIsHighQuality:
+    ...
+```
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,3. Find relevant features.,README.md/# ML Kickstarter/Intended Development Flow/3. Find relevant features.,docs
+"
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
+
+Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,4. Create a training pipeline,README.md/# ML Kickstarter/Intended Development Flow/4. Create a training pipeline,docs
+"
+Train the model by using the Prefect UI.
+
+![Prefect UI training run](assets/prefect-train-model.png)
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,5. Train the model,README.md/# ML Kickstarter/Intended Development Flow/5. Train the model,docs
+"
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,6. Manage the Models,README.md/# ML Kickstarter/Intended Development Flow/6. Manage the Models,docs
+"
+Figure out what the url of the model is and serve the ML model.
+
+View the `wine-model` in `docker-compose.yaml` for an example.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,7. Spin up a serving end-point,README.md/# ML Kickstarter/Intended Development Flow/7. Spin up a serving end-point,docs
+"
+To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`.
+This will reload the models when you promote a new model.
+
+Then we can predict over different datasets, or manually inputted data.
+
+![Predict over data](assets/predict-over-data.png)
+
+```python
+from aligned import FileSource, ...
+from aligned.exposed_model.mlflow import mlflow_server
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[...],
+    exposed_at=mlflow_server(
+        host=""http://my-docker-service-name:8080"",
+
+        # Used to figure out which model version produced the prediction
+        model_name=""movie_review_is_negative"",
+        model_alias=""champion""
+    ),
+    output_source=FileSource.csv_at(""online_preds/movie_review_is_negative.csv""),
+    dataset_store=FileSource.json_at(""datasets/movie_review_is_negative.json"")
+)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,8. Use the model,README.md/# ML Kickstarter/Intended Development Flow/8. Use the model,docs
+"Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
+
+This can also be done through the aligned UI in the evaluation tab.
+Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
+
+```python
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
+```
+
+![Evaluate Models](assets/evaluate-model.png)
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,9. Evaluate Online Predictions,README.md/# ML Kickstarter/Intended Development Flow/9. Evaluate Online Predictions,docs
+"
+This projects contain a simple `Makefile` to simplify the development.
+
+### `make models-up`
+Spins up the differnet trained MLFlow models.
+
+- Spins up the `wine_model` if trained and annotated as `champion` - can be done through `make train`
+- Spins up the `movie_review_is_negative` if trained and annotated as `champion` - can be done through `make train`
+
+### `make ollama`
+
+Spins up the Ollama server and pulls an embedding model down.
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
+
+### `make test`
+Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
+
+### `make build`
+Rebuilds all images if needed.
+
+### `make clean`
+Removes all unused docker images.
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,Other make commands,README.md/# ML Kickstarter/Other make commands,docs
+"This projects contain a simple `Makefile` to simplify the development.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,,README.md/# ML Kickstarter/Other make commands/,docs
+"Spins up the differnet trained MLFlow models.
+
+- Spins up the `wine_model` if trained and annotated as `champion` - can be done through `make train`
+- Spins up the `movie_review_is_negative` if trained and annotated as `champion` - can be done through `make train`
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make models-up`,README.md/# ML Kickstarter/Other make commands/`make models-up`,docs
+"
+Spins up the Ollama server and pulls an embedding model down.
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make ollama`,README.md/# ML Kickstarter/Other make commands/`make ollama`,docs
+"Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make test`,README.md/# ML Kickstarter/Other make commands/`make test`,docs
+"Rebuilds all images if needed.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make build`,README.md/# ML Kickstarter/Other make commands/`make build`,docs
+"Removes all unused docker images.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make clean`,README.md/# ML Kickstarter/Other make commands/`make clean`,docs
+"
+This directory contains data from the pytest's cache plugin,
+which provides the `--lf` and `--ff` options, as well as the `cache` fixture.
+
+**Do not** commit this to version control.
+
+See [the docs](https://docs.pytest.org/en/stable/how-to/cache.html) for more information.
+",.pytest_cache/README.md,0,2024-07-20T10:54:43.222598UTC,# pytest cache directory #,.pytest_cache/README.md/# pytest cache directory #,docs
+"
+This is a kickstarter project for an end-to-end ML.
+
+The goal of this project was to create the project structure that I would love to use my self.
+Therefore, it is optimized for **local development** meaning faster iteration speed.
+
+Furthermore, to make projects reliable, reproducable and easy to deploy will everything be developed through **Docker**, but with **hot reloading**. Meaning less build time and as a result faster iteration speeds.
+
+## AI / ML Capabilities
+- LLM / embedding server using Ollama
+- Model experiment tracking using MLFLow
+- Model regristry using MLFLow
+- Model serving using MLFlow
+- Model evaluation in production using Aligned
+- Job orchestration using Prefect
+- Data catalog using Aligned
+- Data management using Aligned
+- Data quality management using Aligned
+- Data annotation using Aligned
+
+## Software Development Capabilities
+- Complete local development
+- Containerized development for easier deployment
+- Hot reload updatest to orchestation pipelines
+- Hot reload model serving on promotion
+- CI with unit and integration test on PRs
+- CI warning for potential drift detection
+
+## Intended Development Flow
+
+When starting a new AI project, here is the intended development flow.
+
+### 1. Spin up the infra
+First we need to start the needed infrastructure to experiment and run our projects.
+
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+
+### 2. Formulate the AI problem, and the expected AI output.
+
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
+
+```python
+from aligned import String, Bool, model_contract
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[] # Unclear for now
+)
+class MovieReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String()
+    predicted_is_negative = Bool()
+```
+
+
+### 3. Find relevant features.
+We can use the aligned UI to find which features that could be interesting for our ML use-case.
+
+![Find features in Aligned UI](assets/find-features.png)
+
+This assumes that you have told aligned which data to use as the ground truth, which can be done with `.as_classification_label()`.
+
+```python
+@feature_view(...)
+class MovieReview:
+    review_id = String().as_entity()
+    review = String()
+    is_negative = Bool()
+
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+We can now add the intended features into the contract, but listing them, or the full feature view in the `input_feature` attribute. And it is also possible to have differnet versions of input, incase the input changes over time.
+
+```python
+wine_features = Wine()
+
+@model_contract(
+    name=""wine_is_high_quality"",
+    input_features=[
+        wine_features.is_red_wine,
+        wine_features.alcohol,
+        ...
+    ]
+)
+class WineIsHighQuality:
+    ...
+```
+
+### 4. Create a training pipeline
+
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
+
+Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
+
+### 5. Train the model
+
+Train the model by using the Prefect UI.
+
+![Prefect UI training run](assets/prefect-train-model.png)
+
+### 6. Manage the Models
+
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+
+### 7. Spin up a serving end-point
+
+Figure out what the url of the model is and serve the ML model.
+
+View the `wine-model` in `docker-compose.yaml` for an example.
+
+### 8. Use the model
+
+To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`.
+This will reload the models when you promote a new model.
+
+Then we can predict over different datasets, or manually inputted data.
+
+![Predict over data](assets/predict-over-data.png)
+
+```python
+from aligned import FileSource, ...
+from aligned.exposed_model.mlflow import mlflow_server
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[...],
+    exposed_at=mlflow_server(
+        host=""http://my-docker-service-name:8080"",
+
+        # Used to figure out which model version produced the prediction
+        model_name=""movie_review_is_negative"",
+        model_alias=""champion""
+    ),
+    output_source=FileSource.csv_at(""online_preds/movie_review_is_negative.csv""),
+    dataset_store=FileSource.json_at(""datasets/movie_review_is_negative.json"")
+)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+### 9. Evaluate Online Predictions
+Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
+
+This can also be done through the aligned UI in the evaluation tab.
+Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
+
+```python
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
+```
+
+![Evaluate Models](assets/evaluate-model.png)
+
+## Other make commands
+
+This projects contain a simple `Makefile` to simplify the development.
+
+### `make models-up`
+Spins up the differnet trained MLFlow models.
+
+- Spins up the `wine_model` if trained and annotated as `champion` - can be done through `make train`
+- Spins up the `movie_review_is_negative` if trained and annotated as `champion` - can be done through `make train`
+
+### `make ollama`
+
+Spins up the Ollama server and pulls an embedding model down.
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
+
+### `make test`
+Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
+
+### `make build`
+Rebuilds all images if needed.
+
+### `make clean`
+Removes all unused docker images.
+",README.md,0,2024-07-20T10:54:43.222598UTC,# ML Kickstarter,README.md/# ML Kickstarter,docs
+"This is a kickstarter project for an end-to-end ML.
+
+The goal of this project was to create the project structure that I would love to use my self.
+Therefore, it is optimized for **local development** meaning faster iteration speed.
+
+Furthermore, to make projects reliable, reproducable and easy to deploy will everything be developed through **Docker**, but with **hot reloading**. Meaning less build time and as a result faster iteration speeds.
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,,README.md/# ML Kickstarter/,docs
+"- LLM / embedding server using Ollama
+- Model experiment tracking using MLFLow
+- Model regristry using MLFLow
+- Model serving using MLFlow
+- Model evaluation in production using Aligned
+- Job orchestration using Prefect
+- Data catalog using Aligned
+- Data management using Aligned
+- Data quality management using Aligned
+- Data annotation using Aligned
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,AI / ML Capabilities,README.md/# ML Kickstarter/AI / ML Capabilities,docs
+"- Complete local development
+- Containerized development for easier deployment
+- Hot reload updatest to orchestation pipelines
+- Hot reload model serving on promotion
+- CI with unit and integration test on PRs
+- CI warning for potential drift detection
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,Software Development Capabilities,README.md/# ML Kickstarter/Software Development Capabilities,docs
+"
+When starting a new AI project, here is the intended development flow.
+
+### 1. Spin up the infra
+First we need to start the needed infrastructure to experiment and run our projects.
+
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+
+### 2. Formulate the AI problem, and the expected AI output.
+
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
+
+```python
+from aligned import String, Bool, model_contract
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[] # Unclear for now
+)
+class MovieReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String()
+    predicted_is_negative = Bool()
+```
+
+
+### 3. Find relevant features.
+We can use the aligned UI to find which features that could be interesting for our ML use-case.
+
+![Find features in Aligned UI](assets/find-features.png)
+
+This assumes that you have told aligned which data to use as the ground truth, which can be done with `.as_classification_label()`.
+
+```python
+@feature_view(...)
+class MovieReview:
+    review_id = String().as_entity()
+    review = String()
+    is_negative = Bool()
+
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+We can now add the intended features into the contract, but listing them, or the full feature view in the `input_feature` attribute. And it is also possible to have differnet versions of input, incase the input changes over time.
+
+```python
+wine_features = Wine()
+
+@model_contract(
+    name=""wine_is_high_quality"",
+    input_features=[
+        wine_features.is_red_wine,
+        wine_features.alcohol,
+        ...
+    ]
+)
+class WineIsHighQuality:
+    ...
+```
+
+### 4. Create a training pipeline
+
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
+
+Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
+
+### 5. Train the model
+
+Train the model by using the Prefect UI.
+
+![Prefect UI training run](assets/prefect-train-model.png)
+
+### 6. Manage the Models
+
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+
+### 7. Spin up a serving end-point
+
+Figure out what the url of the model is and serve the ML model.
+
+View the `wine-model` in `docker-compose.yaml` for an example.
+
+### 8. Use the model
+
+To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`.
+This will reload the models when you promote a new model.
+
+Then we can predict over different datasets, or manually inputted data.
+
+![Predict over data](assets/predict-over-data.png)
+
+```python
+from aligned import FileSource, ...
+from aligned.exposed_model.mlflow import mlflow_server
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[...],
+    exposed_at=mlflow_server(
+        host=""http://my-docker-service-name:8080"",
+
+        # Used to figure out which model version produced the prediction
+        model_name=""movie_review_is_negative"",
+        model_alias=""champion""
+    ),
+    output_source=FileSource.csv_at(""online_preds/movie_review_is_negative.csv""),
+    dataset_store=FileSource.json_at(""datasets/movie_review_is_negative.json"")
+)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+### 9. Evaluate Online Predictions
+Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
+
+This can also be done through the aligned UI in the evaluation tab.
+Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
+
+```python
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
+```
+
+![Evaluate Models](assets/evaluate-model.png)
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,Intended Development Flow,README.md/# ML Kickstarter/Intended Development Flow,docs
+"When starting a new AI project, here is the intended development flow.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,,README.md/# ML Kickstarter/Intended Development Flow/,docs
+"First we need to start the needed infrastructure to experiment and run our projects.
+
+Run `make infra-up` this spins up the following:
+- `prefect` as the orchetrator that trigger training pipelines. [http://127.0.0.1:4201](http://127.0.0.1:4201)
+- `prefect-worker` local workers that run the pipelines. Reloads on file saves.
+- `mlflow` as the model registry and the experiment tracker. [http://127.0.0.1:7050](http://127.0.0.1:7050)
+- `aligned` as the data catalog and data / ml monitoring. [http://127.0.0.1:9000](http://127.0.0.1:9000)
+
+You are now ready to develop a new model.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,1. Spin up the infra,README.md/# ML Kickstarter/Intended Development Flow/1. Spin up the infra,docs
+"
+E.g. if we want to predict if a review is either positive or negative, it could look something like the following:
+
+```python
+from aligned import String, Bool, model_contract
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[] # Unclear for now
+)
+class MovieReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String()
+    predicted_is_negative = Bool()
+```
+
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,"2. Formulate the AI problem, and the expected AI output.","README.md/# ML Kickstarter/Intended Development Flow/2. Formulate the AI problem, and the expected AI output.",docs
+"We can use the aligned UI to find which features that could be interesting for our ML use-case.
+
+![Find features in Aligned UI](assets/find-features.png)
+
+This assumes that you have told aligned which data to use as the ground truth, which can be done with `.as_classification_label()`.
+
+```python
+@feature_view(...)
+class MovieReview:
+    review_id = String().as_entity()
+    review = String()
+    is_negative = Bool()
+
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+
+We can now add the intended features into the contract, but listing them, or the full feature view in the `input_feature` attribute. And it is also possible to have differnet versions of input, incase the input changes over time.
+
+```python
+wine_features = Wine()
+
+@model_contract(
+    name=""wine_is_high_quality"",
+    input_features=[
+        wine_features.is_red_wine,
+        wine_features.alcohol,
+        ...
+    ]
+)
+class WineIsHighQuality:
+    ...
+```
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,3. Find relevant features.,README.md/# ML Kickstarter/Intended Development Flow/3. Find relevant features.,docs
+"
+Create your own pipeline logic, or maybe reuse the generic classification pipeline, `classifier_from_train_test_set` which is located at `src/pipelines/train.py`.
+
+Remember to add the pipeline to `src/pipelines/available.py` to make it visible in the Prefect UI.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,4. Create a training pipeline,README.md/# ML Kickstarter/Intended Development Flow/4. Create a training pipeline,docs
+"
+Train the model by using the Prefect UI.
+
+![Prefect UI training run](assets/prefect-train-model.png)
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,5. Train the model,README.md/# ML Kickstarter/Intended Development Flow/5. Train the model,docs
+"
+View training runs and manage which models should be deployed, through MLFlow.
+
+![Track Models](assets/track-training-runs.png)
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,6. Manage the Models,README.md/# ML Kickstarter/Intended Development Flow/6. Manage the Models,docs
+"
+Figure out what the url of the model is and serve the ML model.
+
+View the `wine-model` in `docker-compose.yaml` for an example.
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,7. Spin up a serving end-point,README.md/# ML Kickstarter/Intended Development Flow/7. Spin up a serving end-point,docs
+"
+To use the model, update our `model_contract` once more with where the model is exposed, and where we want to store the predictions.
+
+Make sure you have started the models with `make models-up`.
+This will reload the models when you promote a new model.
+
+Then we can predict over different datasets, or manually inputted data.
+
+![Predict over data](assets/predict-over-data.png)
+
+```python
+from aligned import FileSource, ...
+from aligned.exposed_model.mlflow import mlflow_server
+
+@model_contract(
+    name=""movie_review_is_negative"",
+    input_features=[...],
+    exposed_at=mlflow_server(
+        host=""http://my-docker-service-name:8080"",
+
+        # Used to figure out which model version produced the prediction
+        model_name=""movie_review_is_negative"",
+        model_alias=""champion""
+    ),
+    output_source=FileSource.csv_at(""online_preds/movie_review_is_negative.csv""),
+    dataset_store=FileSource.json_at(""datasets/movie_review_is_negative.json"")
+)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    predicted_is_negative = (
+        MovieReview().is_negative
+            .as_classification_label()
+    )
+```
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,8. Use the model,README.md/# ML Kickstarter/Intended Development Flow/8. Use the model,docs
+"Lastly, we can start evaluating online predictions whenever we recive new ground truth values.
+
+This can also be done through the aligned UI in the evaluation tab.
+Here can different models also be compared against each other if you have added the `as_model_version()` in the model contract.
+
+```python
+@model_contract(...)
+class MoviewReviewIsNegative:
+    review_id = String().as_entity()
+    model_version = String().as_model_version()
+    ...
+```
+
+![Evaluate Models](assets/evaluate-model.png)
+",README.md/# ML Kickstarter/Intended Development Flow,0,2024-07-20T10:54:43.222598UTC,9. Evaluate Online Predictions,README.md/# ML Kickstarter/Intended Development Flow/9. Evaluate Online Predictions,docs
+"
+This projects contain a simple `Makefile` to simplify the development.
+
+### `make models-up`
+Spins up the differnet trained MLFlow models.
+
+- Spins up the `wine_model` if trained and annotated as `champion` - can be done through `make train`
+- Spins up the `movie_review_is_negative` if trained and annotated as `champion` - can be done through `make train`
+
+### `make ollama`
+
+Spins up the Ollama server and pulls an embedding model down.
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
+
+### `make test`
+Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
+
+### `make build`
+Rebuilds all images if needed.
+
+### `make clean`
+Removes all unused docker images.
+",README.md/# ML Kickstarter,0,2024-07-20T10:54:43.222598UTC,Other make commands,README.md/# ML Kickstarter/Other make commands,docs
+"This projects contain a simple `Makefile` to simplify the development.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,,README.md/# ML Kickstarter/Other make commands/,docs
+"Spins up the differnet trained MLFlow models.
+
+- Spins up the `wine_model` if trained and annotated as `champion` - can be done through `make train`
+- Spins up the `movie_review_is_negative` if trained and annotated as `champion` - can be done through `make train`
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make models-up`,README.md/# ML Kickstarter/Other make commands/`make models-up`,docs
+"
+Spins up the Ollama server and pulls an embedding model down.
+If you run on MacOS, it is recommended to run the ollama server ouside of docker, as that enables the GPU.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make ollama`,README.md/# ML Kickstarter/Other make commands/`make ollama`,docs
+"Runs all tests in the `tests` dir, both unit tests, and integration tests if you have them.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make test`,README.md/# ML Kickstarter/Other make commands/`make test`,docs
+"Rebuilds all images if needed.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make build`,README.md/# ML Kickstarter/Other make commands/`make build`,docs
+"Removes all unused docker images.
+",README.md/# ML Kickstarter/Other make commands,0,2024-07-20T10:54:43.222598UTC,`make clean`,README.md/# ML Kickstarter/Other make commands/`make clean`,docs

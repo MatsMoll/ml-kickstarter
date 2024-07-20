@@ -1,6 +1,5 @@
 from aligned import ContractStore, FileSource
 from prefect import flow
-from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
 from src.pipelines.train import classifier_from_train_test_set, load_store
@@ -14,6 +13,8 @@ async def train_wine_model(
     validate_size: float = 0.2,
     dataset_id: str | None = None,
 ):
+    from sklearn.ensemble import RandomForestClassifier
+
     store: ContractStore = await load_store()
 
     # Train on all wines
