@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Any, Protocol
 from aligned import FeatureLocation, FeatureStore
 from aligned.schemas.feature import Feature
 
@@ -11,7 +11,7 @@ import numpy as np
 class Model(Protocol):
     def fit(self, X: pl.DataFrame, y: pl.Series): ...
 
-    def predict(self, X: pl.DataFrame): ...
+    def predict(self, X: pl.DataFrame) -> pl.Series: ...
 
     def get_params(self) -> dict: ...
 
@@ -70,13 +70,28 @@ def unpack_lists(input: pl.DataFrame) -> pl.DataFrame:
 
 
 class ModelRegristry(Protocol):
-    def store_model(self, model: Model, model_name: str, store: FeatureStore) -> str:
+    def store_model(
+        self,
+        model: Model,
+        model_name: str,
+        store: FeatureStore,
+        metadata: dict[str, Any] | None = None,
+    ) -> str:
         raise NotImplementedError(type(self))
 
     def load_model_with_id(self, id: str) -> Model | None:
         raise NotImplementedError(type(self))
 
-    def load_model(self, name: str) -> Model | None:
+    def load_model(self, name: str, alias: str) -> Model | None:
+        raise NotImplementedError(type(self))
+
+    def id_for_alias(self, alias: str, model_name: str) -> str:
+        raise NotImplementedError(type(self))
+
+    def set_model_as_alias(self, model_id: str, state: str) -> None:
+        raise NotImplementedError(type(self))
+
+    def metadata_for_id(self, model_id: str) -> dict[str, Any]:
         raise NotImplementedError(type(self))
 
 
@@ -86,7 +101,13 @@ class InMemoryModelRegristry(ModelRegristry):
     def __init__(self, models: dict[str, Model] | None = None):
         self.models = models or {}
 
-    def store_model(self, model: Model, model_name: str, store: FeatureStore) -> str:
+    def store_model(
+        self,
+        model: Model,
+        model_name: str,
+        store: FeatureStore,
+        metadata: dict[str, Any] | None = None,
+    ) -> str:
         from uuid import uuid4
 
         id = str(uuid4())
@@ -169,7 +190,13 @@ def signature_for_model(
 
 
 class MlFlowModelRegristry(ModelRegristry):
-    def store_model(self, model: Model, model_name: str, store: FeatureStore) -> str:
+    def store_model(
+        self,
+        model: Model,
+        model_name: str,
+        store: FeatureStore,
+        metadata: dict[str, str] | None = None,
+    ) -> str:
         from sklearn.base import BaseEstimator
 
         client = mlflow.client.MlflowClient()
@@ -182,13 +209,11 @@ class MlFlowModelRegristry(ModelRegristry):
 
         try:
             version = mlflow.register_model(
-                info.model_uri,
-                model_name,
+                info.model_uri, name=model_name, tags=metadata
             )
         except Exception:
             version = client.create_model_version(
-                name=model_name,
-                source=info.model_uri,
+                name=model_name, source=info.model_uri, tags=metadata
             )
 
         try:
@@ -198,11 +223,30 @@ class MlFlowModelRegristry(ModelRegristry):
                 model_name, "champion", version=version.version
             )
 
-        return info.model_uri
+        return f"models:/{model_name}/{version.version}"
+
+    def set_model_as_alias(self, model_id: str, state: str) -> None:
+        client = mlflow.client.MlflowClient()
+        components = model_id.split("@")[0].split("/")
+
+        version = components[-1]
+        model_name = components[-2]
+
+        client.set_registered_model_alias(model_name, state, version)
+
+    def metadata_for_id(self, model_id: str) -> dict[str, Any]:
+        client = mlflow.client.MlflowClient()
+        version = client.get_model_version_by_alias(model_id, "")
+        return version.tags
 
     def load_model_with_id(self, id: str) -> Model | None:
         return mlflow.sklearn.load_model(id)
 
-    def load_model(self, name: str, alias: str = "Champion") -> Model | None:
+    def id_for_alias(self, alias: str, model_name: str) -> str:
+        client = mlflow.client.MlflowClient()
+        version = client.get_model_version_by_alias(model_name, alias)
+        return f"models:/{model_name}/{version.version}"
+
+    def load_model(self, name: str, alias: str = "champion") -> Model | None:
         uri = f"models:/{name}@{alias}"
         return mlflow.sklearn.load_model(uri)

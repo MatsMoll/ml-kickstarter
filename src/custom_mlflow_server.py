@@ -10,6 +10,7 @@ from io import StringIO
 from fastapi import Depends, Header, Request, Response
 
 from aligned.schemas.feature import FeatureReference, FeatureLocation, FeatureType
+from src.model_registry import unpack_lists
 
 from mlflow.types import ColSpec, Schema, TensorSpec
 from mlflow.version import VERSION
@@ -193,10 +194,12 @@ class MLflowRuntime(MLModel):
         if mime_type == CONTENT_TYPE_CSV:
             csv_input = StringIO(raw_body)
             data = parse_csv_input(csv_input=csv_input, schema=self._input_schema)
-            inference_params = None
         elif mime_type == CONTENT_TYPE_JSON:
-            raw_data, inference_params = _split_data_and_params(raw_body)
+            import polars as pl
+
+            raw_data, _ = _split_data_and_params(raw_body)
             data = infer_and_parse_data(raw_data, self._input_schema)
+            data = unpack_lists(pl.from_pandas(data))
         else:
             err_message = (
                 "This predictor only supports the following content types, "
@@ -205,7 +208,7 @@ class MLflowRuntime(MLModel):
             raise InferenceError(err_message)
 
         try:
-            raw_predictions = self._model.predict(data, params=inference_params)
+            raw_predictions = self._model.predict(data)
         except MlflowException as e:
             raise InferenceError(e.message)
         except Exception:
@@ -223,9 +226,10 @@ class MLflowRuntime(MLModel):
     async def load(self) -> bool:
         # TODO: Log info message
         model_uri = await get_model_uri(self._settings)
-        self._model = mlflow.pyfunc.load_model(model_uri)
-        self._input_schema = aligned_schema(self._model.metadata.get_input_schema())
-        self._signature = self._model.metadata.signature
+        model_info = mlflow.models.get_model_info(model_uri)
+        self._model = mlflow.sklearn.load_model(model_uri)
+        self._input_schema = aligned_schema(model_info.signature.inputs)
+        self._signature = model_info.signature
         self._sync_metadata()
 
         return True

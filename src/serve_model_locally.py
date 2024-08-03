@@ -1,16 +1,11 @@
 from pathlib import Path
 import json
 import mlflow
-import click
 import subprocess
+import argparse
 
 
-@click.group()
-def cli() -> None:
-    pass
-
-
-def start_mlfow_server(model_name: str, alias: str, port: int, host: str):
+def start_mlfow_server(model_name: str, alias: str, port: int, host: str) -> None:
     uri = f"models:/{model_name}@{alias}"
     print(uri)
     try:
@@ -42,18 +37,25 @@ def start_mlfow_server(model_name: str, alias: str, port: int, host: str):
     )
 
 
-@cli.command()
-@click.argument("model_name", type=str)
-@click.option("--alias", type=str, default="champion")
-@click.option("--mlflow-dir", type=Path, default="mlflow/experiments")
-@click.option("--port", type=int, default="8080")
-@click.option("--host", type=str, default="0.0.0.0")
-def serve_mlflow_model(
-    model_name: str, alias: str, mlflow_dir: Path, port: int, host: str
-):
+def serve_mlflow_model() -> None:
     from watchfiles import run_process
 
-    model_alias_file = mlflow_dir / "models" / model_name / "aliases" / alias
+    parser = argparse.ArgumentParser()
+    parser.add_argument("model_name", type=str, help="The model to serve")
+    parser.add_argument("--alias", type=str, default="champion")
+    parser.add_argument("--mlflow-dir", type=str, default="mlflow/experiments")
+    parser.add_argument("--port", type=int, default=8080)
+    parser.add_argument("--host", type=str, default="0.0.0.0")
+
+    args = parser.parse_args()
+
+    model_name = args.model_name
+    alias = args.alias
+    mlflow_dir = args.mlflow_dir
+    port = args.port
+    host = args.host
+
+    model_alias_file = Path(mlflow_dir) / "models" / model_name / "aliases" / alias
 
     run_process(
         model_alias_file.resolve(),
@@ -63,4 +65,4 @@ def serve_mlflow_model(
 
 
 if __name__ == "__main__":
-    cli()
+    serve_mlflow_model()

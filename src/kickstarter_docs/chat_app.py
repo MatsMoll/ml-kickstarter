@@ -12,8 +12,8 @@ try:
     import streamlit as st
     from streamlit.delta_generator import DeltaGenerator
 except ImportError:
-    st = None
-    DeltaGenerator = None
+    st = None  # type: ignore
+    DeltaGenerator = None  # type: ignore
 
 
 @dataclass
@@ -110,7 +110,7 @@ async def run(chat_store: ChatStore):
 
 
 async def display_response(contract: ModelFeatureStore, prompt: str) -> ChatMessage:
-    from streamlit_components.async_stream import write_stream
+    from src.streamlit_components.async_stream import write_stream
 
     exposed_model = contract.model.exposed_model
     assert exposed_model is not None

@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Any, Generator, Protocol
 import mlflow
 from contextlib import contextmanager
 from matplotlib.figure import Figure
@@ -6,10 +6,10 @@ from matplotlib.figure import Figure
 
 class ExperimentTracker(Protocol):
     @contextmanager
-    def start_run(self, run_name: str):
+    def start_run(self, run_name: str) -> Generator[None, None, None]:
         raise NotImplementedError(type(self))
 
-    def log_model_params(self, params: dict) -> None:
+    def log_model_params(self, params: dict[str, Any]) -> None:
         raise NotImplementedError(type(self))
 
     def log_metric(self, key: str, value: float) -> None:
@@ -24,12 +24,12 @@ class ExperimentTracker(Protocol):
 
 class MlFlowExperimentTracker(ExperimentTracker):
     @contextmanager
-    def start_run(self, run_name: str):
+    def start_run(self, run_name: str) -> Generator[None, None, None]:
         mlflow.set_experiment(run_name)
         with mlflow.start_run(run_name=run_name):
             yield
 
-    def log_model_params(self, params: dict) -> None:
+    def log_model_params(self, params: dict[str, Any]) -> None:
         mlflow.log_params(params)
 
     def log_metric(self, key: str, value: float) -> None:
@@ -55,15 +55,15 @@ class MlFlowExperimentTracker(ExperimentTracker):
 
 class StdoutExperimentTracker(ExperimentTracker):
     @contextmanager
-    def start_run(self, run_name: str):
+    def start_run(self, run_name: str) -> Generator[None, None, None]:
         print(f"Starting run {run_name}")
         yield
         print(f"Ending run {run_name}")
 
-    def log_model_params(self, params: dict):
+    def log_model_params(self, params: dict[str, Any]) -> None:
         print(f"Logging params: {params}")
 
-    def log_metric(self, key: str, value: float):
+    def log_metric(self, key: str, value: float) -> None:
         print(f"Logging metric {key}: {value}")
 
     def log_figure(self, figure: Figure, name: str) -> None:

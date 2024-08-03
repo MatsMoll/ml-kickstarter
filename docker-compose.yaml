@@ -24,14 +24,13 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.serve
-    command: "python -m serve_model_locally serve-mlflow-model movie_review_is_negative"
+    command: "python -m src.serve_model_locally movie_review_is_negative"
     ports:
       - 8081:8080
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
-      - ./serve_model_locally.py:/app/serve_model_locally.py
       - ./model-settings:/app/model-settings
       # Adding mlflow to automatically update on model promption
       - ./mlflow/experiments/models:/app/mlflow/experiments/models
@@ -44,14 +43,13 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.serve
-    command: "python -m serve_model_locally serve-mlflow-model is_high_quality_wine"
+    command: "python -m src.serve_model_locally is_high_quality_wine"
     ports:
       - 8080:8080
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
-      - ./serve_model_locally.py:/app/serve_model_locally.py
       - ./model-settings:/app/model-settings
       # Adding mlflow to automatically update on model promption
       - ./mlflow/experiments/models:/app/mlflow/experiments/models
@@ -60,6 +58,23 @@ services:
     depends_on:
       - base-image
     profiles: [model]
+
+  movie-review-app:
+    image: project-catalog
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.catalog
+    command: "python -m streamlit run src/movie_review/review_app.py --server.port 8501 --server.fileWatcherType poll"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+    ports:
+      - 9002:8501
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    profiles: [infra]
 
   aligned-docs:
     image: project-catalog
@@ -71,7 +86,6 @@ services:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
-      - ./streamlit_components:/app/streamlit_components
       - ./data:/app/data
     ports:
       - 9001:8501
@@ -89,6 +103,7 @@ services:
       - MLFLOW_TRACKING_URI=http://mlflow-tracker:8000
     volumes:
       - ./src:/app/src
+      - ./../aligned-managed-catalog:/app
       - ./data:/app/data
       - ./README.md:/app/README.md
       - ./src/load_store.py:/app/custom_store.py

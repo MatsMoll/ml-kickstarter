@@ -76,7 +76,7 @@ class WhiteWine:
 
 # Creates a new view with the same schema as WhiteWine
 # But swaps out the source with a Red Wine dataset
-RedWine = WhiteWine.with_source(
+RedWine = WhiteWine.with_source(  # type: ignore
     "red_wine",
     dataset_dir.csv_at("red.csv", csv_config=csv_config, mapping_keys=mapping_keys)
     .transform_with_polars(add_hash_column)
@@ -90,7 +90,7 @@ RedWine = WhiteWine.with_source(
 
 @feature_view(
     name="wine",
-    source=WhiteWine.vstack(RedWine, source_column="origin_view"),
+    source=WhiteWine.vstack(RedWine, source_column="origin_view"),  # type: ignore
     acceptable_freshness=timedelta(days=30),
 )
 class Wine:

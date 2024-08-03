@@ -22,10 +22,20 @@ streamlit = "*"
 watchfiles = "^0.21.0"
 pytest-asyncio = "^0.23.6"
 pytest = "^8.2.0"
+mypy = "^1.11.0"
 
 [tool.poetry.group.serve.dependencies]
 mlserver-mlflow = "^1.6.0"
 mlserver = "^1.6.0"
+
+[tool.mypy]
+pretty = false
+strict = false
+python_version = "3.10"
+check_untyped_defs = true
+ignore_missing_imports = true
+explicit_package_bases = false
+no_namespace_packages = true
 
 [build-system]
 requires = ["poetry-core"]

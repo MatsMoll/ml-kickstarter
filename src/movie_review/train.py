@@ -15,7 +15,7 @@ async def equal_distribution_entities(
 
     all_entities = (
         await store.feature_view("movie_review")
-        .select_columns(["file", "is_negative"])
+        .select_columns(["review_id", "is_negative"])
         .to_polars()
     )
     return (

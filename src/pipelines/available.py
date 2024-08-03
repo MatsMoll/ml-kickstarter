@@ -25,11 +25,11 @@ def all_pipelines() -> list[RunnerDeployment]:
     ]
 
 
-def listen_to_work():
+def listen_to_work() -> None:
     serve(*all_pipelines())  # type: ignore
 
 
-async def main():
+async def main() -> None:
     from watchfiles import arun_process
 
     await arun_process(Path("src").resolve(), target=listen_to_work, args=())

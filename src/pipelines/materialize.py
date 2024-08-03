@@ -4,6 +4,7 @@ from aligned import ContractStore, FeatureLocation
 from datetime import datetime
 from prefect import get_run_logger, flow, task
 from prefect.futures import PrefectFuture
+from prefect.utilities.asyncutils import Async
 
 
 @task
@@ -19,30 +20,30 @@ async def materialize_view(view_name: str, store: ContractStore) -> None:
 
     view_store = store.feature_view(view_name)
     view = view_store.view
-    logger.info(f"Checking if {view.name} is up to date.")
 
     if not view.materialized_source:
         logger.info(f"No materialized source for {view.name}.")
         return
 
+    logger.info(f"Checking if {view.name} is up to date.")
     last_update: datetime | None = None
 
     if view.acceptable_freshness:
         last_update = await view_store.freshness()
 
-        logger.info(last_update)
         if last_update:
             freshness = datetime.now(tz=last_update.tzinfo) - last_update
 
             if freshness < view.acceptable_freshness:
                 logger.info(
-                    f"Freshness was {freshness} which is lower than {view.acceptable_freshness}. Therefore, skipping materialization."
+                    f"Freshness was {freshness} which is lower than {view.acceptable_freshness}. "
+                    f"Therefore, skipping materialization of {view_name}."
                 )
                 return
 
     logger.info(f"Materialize {view.name}")
     if last_update:
-        logger.info(f"Incremental update from {last_update}")
+        logger.info(f"Incremental update '{view_name}' from {last_update}")
         await store.upsert_into(
             FeatureLocation.feature_view(view.name),
             view_store.using_source(view.source).between_dates(
@@ -50,7 +51,7 @@ async def materialize_view(view_name: str, store: ContractStore) -> None:
             ),
         )
     else:
-        logger.info("Updating everything")
+        logger.info(f"Updating everything '{view_name}'")
         await store.overwrite(
             FeatureLocation.feature_view(view.name),
             view_store.using_source(view.source).all(),
@@ -58,7 +59,7 @@ async def materialize_view(view_name: str, store: ContractStore) -> None:
 
 
 async def levels_for_store(store: ContractStore) -> dict[FeatureLocation, int]:
-    levels = {}
+    levels: dict[FeatureLocation, int] = {}
 
     def update_with(sub_levels: dict[FeatureLocation, int]) -> None:
         for key, value in sub_levels.items():
@@ -82,6 +83,7 @@ async def levels_for_store(store: ContractStore) -> dict[FeatureLocation, int]:
 async def location_depends_on(
     location: FeatureLocation, store: ContractStore
 ) -> set[FeatureLocation]:
+    depends_on: set[FeatureLocation] = set()
     if location.location == "model":
         model_store = store.model(location.name)
         depends_on = model_store.depends_on()
@@ -167,7 +169,7 @@ def update_order(levels: dict[FeatureLocation, int]) -> list[list[FeatureLocatio
 
 
 @flow
-async def update_out_of_date_data(location: str | None = None):
+async def update_out_of_date_data(location: str | None = None) -> None:
     """
     Updates all data that is out of data based on the `accepted_freshness` threshold.
 
@@ -194,9 +196,9 @@ async def update_out_of_date_data(location: str | None = None):
         {loc: val for loc, val in levels.items() if loc in levels_to_update}
     )
 
-    task_map: dict[FeatureLocation, PrefectFuture] = {}
+    task_map: dict[FeatureLocation, PrefectFuture[None, Async]] = {}
 
-    logger.info(f"Updating info for {levels_to_update}")
+    logger.info(f"Updating info for {[ loc.identifier for loc in levels_to_update ]}")
 
     for level in location_update_order:
         for loc in level:
@@ -206,11 +208,9 @@ async def update_out_of_date_data(location: str | None = None):
                 task_map[loc] = await materialize_view.with_options(
                     name=f"{loc.name}_materialize"
                 ).submit(loc.name, store, wait_for=wait_for)
-                logger.info(f"Type of task: {type(task_map[loc])} - {task_map[loc]}")
             else:
                 task_map[loc] = await batch_predict_for.with_options(
                     name=f"{loc.name}_batch_predict"
                 ).submit(loc.name, store, wait_for=wait_for)
-                logger.info(f"Type of task: {type(task_map[loc])} - {task_map[loc]}")
 
     await asyncio.gather(*[task.wait() for task in task_map.values()])
