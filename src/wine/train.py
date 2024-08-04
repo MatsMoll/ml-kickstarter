@@ -6,6 +6,7 @@ import numpy as np
 from src.pipelines.train import (
     BaselineEvaluation,
     RelativeThreshold,
+    Metric,
     classifier_from_train_test_set,
     load_store,
 )
@@ -21,6 +22,13 @@ async def train_wine_model(
 ) -> None:
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.dummy import DummyClassifier
+    from sklearn.metrics import (
+        accuracy_score,
+        precision_score,
+        recall_score,
+        f1_score,
+        roc_auc_score,
+    )
 
     store: ContractStore = await load_store()
 
@@ -41,9 +49,16 @@ async def train_wine_model(
         model=model,  # type: ignore [reportArgumentType]
         param_search=search_params,
         train_size=train_size / total_size,
+        metrics={
+            "accuracy": Metric(accuracy_score, is_greater_better=True),
+            "precision": Metric(precision_score, is_greater_better=True),
+            "recall": Metric(recall_score, is_greater_better=True),
+            "f1": Metric(f1_score, is_greater_better=True),
+            "roc_auc": Metric(roc_auc_score, is_greater_better=True),
+        },
         metric_creteria={"precision": 0.7, "accuracy": 0.8, "recall": 0.4},
         baseline_creteria=BaselineEvaluation(
-            models=[DummyClassifier(strategy="most_frequent"), DummyClassifier()],
+            models=[DummyClassifier(strategy="most_frequent")],
             thresholds=[
                 RelativeThreshold(
                     metric_name="precision",
