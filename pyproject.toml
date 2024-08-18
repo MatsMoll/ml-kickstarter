@@ -18,6 +18,9 @@ beautifulsoup4 = "^4.12.3"
 [tool.poetry.group.streamlit.dependencies]
 streamlit = "*"
 
+[tool.poetry.group.lsp.dependencies]
+pyright = "*"
+
 [tool.poetry.group.dev.dependencies]
 watchfiles = "^0.21.0"
 pytest-asyncio = "^0.23.6"

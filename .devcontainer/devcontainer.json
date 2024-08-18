@@ -1,0 +1,34 @@
+{
+    "dockerComposeFile": "../docker-compose.yaml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspaces",
+
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2":{
+            "installZsh": "true",
+            "username": "vscode",
+            "userUid": "1000",
+            "userGid": "1000",
+            "upgradePackages": "true"
+        },
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest",
+            "ppa": "false"
+        }
+    },
+    // Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.languageServer": "Pylance"
+			},
+			"extensions": [
+			# added by VSCode
+			    "ms-python.python"
+			]
+		}
+	},
+}

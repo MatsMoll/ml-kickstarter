@@ -4,16 +4,6 @@ from aligned.exposed_model.mlflow import mlflow_server
 
 dataset_dir = FileSource.directory("data/sentiment")
 
-# @feature_view(
-#     name="unannotated_movie_review",
-#     source=dataset_dir.csv_at("movie_review.csv")
-# )
-# class MovieReview:
-#     review_id = String().as_entity()
-#     text = String()
-#     movie_name = String()
-#     created_at = EventTimestamp()
-
 
 @feature_view(
     name="movie_review",
@@ -26,52 +16,6 @@ class AnnotatedMovieReview:
     text = String()
     is_negative = Bool()
 
-
-# class MovieReviews:
-#     review_id = String().as_entity()
-#     text = String()
-#     created_at = EventTimestamp()
-#
-#
-# """
-# Annotert view
-#
-# Det er et feature view som inneholder annoterte rows, men det er basert på en eksisterende kilde.
-#
-# Den skal ikke materialize dataen fra kilden, men man skal kunne annotere data fra kilden.
-#
-# Data to annotate: feature view
-# Annotated at: EventTimestamp
-# Annotated by: String?
-#
-# Annotation input: copy av source feature view
-#
-# Selection:
-# - None
-# - Range -> Start, end
-# - Image section -> Center, height, width -> x, y
-#
-# Outputen vil være forskjellig basert på oppgaven:
-# - Label
-# - Segmentation
-# """
-#
-# @annotated_view(
-#     view=MovieReviews,
-#     annotate_field=MovieReviews().text,
-#     source=FileSource.csv_at("")
-# )
-# class AnnotatedMovieReview:
-#     section = ImageSection().is_option() # Or TextSection()
-#
-#     annotated_at = EventTimestamp()
-#     annotated_by = String().as_annotator()
-#
-#     is_negative = Bool()
-#
-#     label = String().accepted_values(["A", "b", "c", "d"])
-#     segmentations = List(Point())
-#
 
 review = AnnotatedMovieReview()
 
