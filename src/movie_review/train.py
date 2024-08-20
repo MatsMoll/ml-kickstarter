@@ -25,12 +25,11 @@ async def equal_distribution_entities(
     )
 
 
-@flow(name="train_movie_review_is_negative_with_train_test_validate")
+@flow(name="train_movie_review_is_negative_with_train_test")
 async def train_sentiment(
     number_of_records: int = 1000,
     search_params: dict | None = None,
     train_size: float = 0.75,
-    test_size: float = 0.15,
     dataset_id: str | None = None,
 ):
     from sklearn.ensemble import RandomForestClassifier
@@ -46,16 +45,13 @@ async def train_sentiment(
     )
     dataset_dir = FileSource.directory("data/movie_review_is_negative/datasets")
 
-    total_size = train_size + test_size
-
     await classifier_from_train_test_set(
         store=store,
         model_contract="movie_review_is_negative",
+        model=model,  # type: ignore
         entities=entities,
         dataset_dir=dataset_dir,
         dataset_id=dataset_id,
-        model=model,  # type: ignore
         param_search=search_params,
-        train_size=train_size / total_size,
-        test_size=test_size / total_size,
+        train_size=train_size,
     )
